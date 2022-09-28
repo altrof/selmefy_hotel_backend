@@ -26,7 +26,7 @@ CREATE TABLE room(
 
 CREATE TABLE person(
     id BIGSERIAL PRIMARY KEY,
-    identity_code VARCHAR NOT NULL UNIQUE,
+    identity_code VARCHAR(255) NOT NULL UNIQUE,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     date_of_birth DATE NOT NULL,
