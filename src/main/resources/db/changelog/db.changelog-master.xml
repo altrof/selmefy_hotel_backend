@@ -60,6 +60,17 @@
         <addUniqueConstraint columnNames="floor_id, room_number" tableName="room"/>
     </changeSet>
 
+    <changeSet id="5" author="Norman">
+        <insert tableName="hotel">
+            <column name="hotel_name" value="selmify deluxe" />
+        </insert>
+        <addUniqueConstraint columnNames="floor_id, room_number" tableName="room"/>
+    </changeSet>
 
+    <changeSet id="6" author="Norman">
+        <insert tableName="hotel_floor">
+            <column name="hotel_id" valueComputed="(SELECT id FROM hotel WHERE hotel_name='selmify deluxe')" />
+        </insert>
+    </changeSet>
 
 </databaseChangeLog>
