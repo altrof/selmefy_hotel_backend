@@ -32,4 +32,34 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="3" author="Norman">
+        <createTable tableName="hotel_floor">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="hotel_id" type="smallint">
+                <constraints nullable="false" foreignKeyName="hotel_id" references="hotel(id)"/>
+            </column>
+        </createTable>
+        <dropTable  cascadeConstraints="true"
+                    schemaName="public"
+                    tableName="room"/>
+    </changeSet>
+
+    <changeSet id="4" author="Norman">
+        <createTable tableName="room">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="size" type="float"/>
+            <column name="floor_id" type="smallint">
+                <constraints nullable="false" foreignKeyName="floor_id" references="hotel_floor(id)"/>
+            </column>
+            <column name="room_number" type="smallint" />
+        </createTable>
+        <addUniqueConstraint columnNames="floor_id, room_number" tableName="room"/>
+    </changeSet>
+
+
+
 </databaseChangeLog>
