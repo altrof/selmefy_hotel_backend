@@ -73,4 +73,28 @@
         </insert>
     </changeSet>
 
+    <changeSet id="8" author="Norman">
+        <sql>
+            <![CDATA[  ALTER TABLE room ADD CONSTRAINT room_number_within_limits CHECK (0 < room_number AND room_number < 10)]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="9" author="Norman">
+        <sql>
+            <![CDATA[  ALTER TABLE room ADD COLUMN number_of_beds SMALLINT]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="10" author="Norman">
+        <insert tableName="room">
+            <column name="size" value="5.0"/>
+            <column name="number_of_beds" value="2" />
+            <column name="floor_id"
+                    valueComputed="(SELECT hotel_floor.id FROM hotel_floor,
+                    hotel WHERE hotel.hotel_name='selmify deluxe')" />
+            <column name="room_number" value="1" />
+        </insert>
+    </changeSet>
+
+
 </databaseChangeLog>
