@@ -95,6 +95,5 @@
             <column name="room_number" value="1" />
         </insert>
     </changeSet>
-
-
+    <includeAll path="db/changelog/changes"/>
 </databaseChangeLog>
