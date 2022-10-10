@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+    <preConditions>
+        <runningAs  username="postgres"/>
+    </preConditions>
+
+    <changeSet id="1" author="Liquibase">
+        <createTable tableName="hotel">
+            <column name="id" type="serial">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="hotel_name" type="varchar(100)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="Norman">
+        <createTable tableName="room">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="hotel_id" type="smallint">
+                <constraints nullable="false" foreignKeyName="hotel_id" references="hotel(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="Norman">
+        <createTable tableName="hotel_floor">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="hotel_id" type="smallint">
+                <constraints nullable="false" foreignKeyName="hotel_id" references="hotel(id)"/>
+            </column>
+        </createTable>
+        <dropTable  cascadeConstraints="true"
+                    schemaName="public"
+                    tableName="room"/>
+    </changeSet>
+
+    <changeSet id="4" author="Norman">
+        <createTable tableName="room">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="size" type="float"/>
+            <column name="floor_id" type="smallint">
+                <constraints nullable="false" foreignKeyName="floor_id" references="hotel_floor(id)"/>
+            </column>
+            <column name="room_number" type="smallint" />
+        </createTable>
+        <addUniqueConstraint columnNames="floor_id, room_number" tableName="room"/>
+    </changeSet>
+
+    <changeSet id="5" author="Norman">
+        <insert tableName="hotel">
+            <column name="hotel_name" value="selmify deluxe" />
+        </insert>
+        <addUniqueConstraint columnNames="floor_id, room_number" tableName="room"/>
+    </changeSet>
+
+    <changeSet id="6" author="Norman">
+        <insert tableName="hotel_floor">
+            <column name="hotel_id" valueComputed="(SELECT id FROM hotel WHERE hotel_name='selmify deluxe')" />
+        </insert>
+    </changeSet>
+
+    <changeSet id="8" author="Norman">
+        <sql>
+            <![CDATA[  ALTER TABLE room ADD CONSTRAINT room_number_within_limits CHECK (0 < room_number AND room_number < 10)]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="9" author="Norman">
+        <sql>
+            <![CDATA[  ALTER TABLE room ADD COLUMN number_of_beds SMALLINT]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="10" author="Norman">
+        <insert tableName="room">
+            <column name="size" value="5.0"/>
+            <column name="number_of_beds" value="2" />
+            <column name="floor_id"
+                    valueComputed="(SELECT hotel_floor.id FROM hotel_floor,
+                    hotel WHERE hotel.hotel_name='selmify deluxe')" />
+            <column name="room_number" value="1" />
+        </insert>
+    </changeSet>
+    <includeAll path="db/changelog/changes"/>
+</databaseChangeLog>
