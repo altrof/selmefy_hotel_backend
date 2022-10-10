@@ -1,0 +1,26 @@
+stages:
+  - build
+  - deploy
+
+build test-backend:
+  stage: build
+  only:
+    refs:
+      - main
+  tags:
+    - main
+  script:
+    - ./gradlew clean build -x test
+    - docker build -t nkuusik/web-project .
+
+deploy test-backend:
+  stage: deploy
+  only:
+    refs:
+      - main
+  tags:
+    - main
+  script:
+    - cd /opt/web-project
+    - docker compose down
+    - docker compose up -d

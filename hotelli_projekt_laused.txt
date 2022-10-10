@@ -33,9 +33,13 @@ Andmebaasi/backend olemid:
 
 - Kasutajakonto
    - Kasutajakonto on seotud isikuga.
+        Kasutajakonto primary key on isiku id.
+        Kasutajakonto secondary foreign key on isiku isikukood.
    - Kasutajakontol on e-mail
+   - E-maili aadress on 254 tähte
    - Kasutajakontol on kasutajanimi
    - Kasutajakontol on parool
+   - Paroolil on password hash, mille pikkus on 60 tähte
    - Kasutajakontosid on kahte tüüpi: töötaja, klient   
 
 - Registreeritud klient
@@ -50,6 +54,7 @@ Andmebaasi/backend olemid:
 
 - Töötaja
   - Töötajal on	roll
+          Töötaja primary key on isiku id.
   - Töötajal on alguskuupäev
   - Töötajal on staatus: kas hetkel aktiivselt tööl või mitte
   - Mitteaktiivsel töötajal on lõpukuupäev
