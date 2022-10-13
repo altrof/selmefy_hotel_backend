@@ -23,7 +23,6 @@ CREATE TABLE room(
     -- in the hotel_floor table. Has to use triggers.
 );
 
-
 CREATE TABLE person(
     id BIGSERIAL PRIMARY KEY NOT NULL,
     identity_code VARCHAR(255) NOT NULL UNIQUE,
