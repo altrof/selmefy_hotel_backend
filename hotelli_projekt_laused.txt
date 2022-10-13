@@ -33,10 +33,14 @@ Andmebaasi/backend olemid:
 
 - Kasutajakonto
    - Kasutajakonto on seotud isikuga.
+   - Kasutajakonto primary key on isiku id.
+   - Kasutajakonto secondary foreign key on isiku isikukood.
    - Kasutajakontol on e-mail
+   - E-maili aadress on 254 tähte
    - Kasutajakontol on kasutajanimi
    - Kasutajakontol on parool
-   - Kasutajakontosid on kahte tüüpi: töötaja, klient   
+   - Paroolil on password hash, mille pikkus on 60 tähte
+   - Kasutajakontosid on kahte tüüpi: töötaja, klient
 
 - Registreeritud klient
    - Registreeritud kliendil on reseveeringud
@@ -50,13 +54,14 @@ Andmebaasi/backend olemid:
 
 - Töötaja
   - Töötajal on	roll
+          Töötaja primary key on isiku id.
   - Töötajal on alguskuupäev
   - Töötajal on staatus: kas hetkel aktiivselt tööl või mitte
   - Mitteaktiivsel töötajal on lõpukuupäev
 
 - Töötaja staatus
   - Töötaja staatus on kas aktiivne, mitteaktiivne või puhkusel
-		
+
 - Teenused
   - Teenus on midagi, mida hotell pakub lisaks toale (restoran, saun, jõusaal jms)
   - Teenusel on nimi
@@ -64,4 +69,3 @@ Andmebaasi/backend olemid:
   - Teenusel on toimumise aeg
 
 TODO: Teenuse tellimine
-
