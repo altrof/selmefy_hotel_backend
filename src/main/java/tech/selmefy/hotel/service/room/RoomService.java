@@ -15,9 +15,8 @@ public class RoomService {
 
     public final RoomRepository roomRepository;
 
-    public List<RoomDTO> getAllRooms() {
+    public List<Room> getAllRooms() {
         List<Room> rooms = roomRepository.findAll();
-        return List.of((RoomDTO) rooms.stream().map(RoomMapper.INSTANCE::toDTO));
+        return rooms;
     }
-
 }
