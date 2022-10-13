@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+    <preConditions>
+        <runningAs  username="postgres"/>
+    </preConditions>
+
+    <changeSet id="HOT-34-refactor-existing-liquibase-files_1" author="Norman">
+        <createTable tableName="hotel">
+            <column name="id" type="serial">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="hotel_name" type="varchar(100)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="HOT-34-refactor-existing-liquibase-files_2" author="Norman">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            CREATE TABLE hotel_floor(
+            id BIGSERIAL PRIMARY KEY,
+            hotel_id SMALLINT,
+            FOREIGN KEY (hotel_id) REFERENCES
+            hotel (id) ON DELETE NO ACTION ON UPDATE CASCADE);
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-34-refactor-existing-liquibase-files_3" author="Norman">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            CREATE TABLE room(
+                id BIGSERIAL PRIMARY KEY,
+                size FLOAT,
+                number_of_beds SMALLINT,
+                floor_id INT,
+                room_number SMALLINT NOT NULL,
+                FOREIGN KEY (floor_id) REFERENCES hotel_floor (id) ON DELETE NO ACTION ON UPDATE CASCADE,
+                CONSTRAINT unique_room_number_for_floor UNIQUE (floor_id, room_number),
+                CONSTRAINT room_number_within_limits CHECK (0 &lt; room_number AND room_number &lt; 10)
+                -- if we have the time, we can replace the hardcoded CONSTRAINT room_number_within_limits
+                -- with a dynamic value that references to some capacity value
+                -- in the hotel_floor table. Has to use triggers.
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-34-refactor-existing-liquibase-files_4" author="Norman">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            INSERT INTO hotel (hotel_name) VALUES ('selmefy deluxe');
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-34-refactor-existing-liquibase-files_5" author="Norman">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            INSERT INTO hotel_floor (hotel_id)
+            SELECT id FROM hotel WHERE hotel_name='selmefy deluxe';
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-34-refactor-existing-liquibase-files_6" author="Norman">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            INSERT INTO room (size, number_of_beds, floor_id, room_number)
+            SELECT 5.0, 2, hotel_floor.id, 1
+            FROM hotel_floor, hotel
+            WHERE hotel.hotel_name='selmefy deluxe' AND hotel.id=hotel_floor.hotel_id;
+        </sql>
+    </changeSet>
+</databaseChangeLog>
