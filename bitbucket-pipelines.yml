@@ -12,6 +12,7 @@ pipelines:
       - step:
           name: Test
           script:
+            - ./gradlew build
             - ./gradlew clean test
       - step:
           name: Deploy to test
