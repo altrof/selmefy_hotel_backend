@@ -12,10 +12,10 @@ pipelines:
       - step:
           name: Test
           script:
-            - docker-compose up -d
+            - docker compose up -d
             - ./gradlew build
             - ./gradlew clean test
-            - docker-compose down
+            - docker compose down
       - step:
           name: Deploy to test
           deployment: test
