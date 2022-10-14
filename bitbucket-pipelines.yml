@@ -16,3 +16,11 @@ pipelines:
             - linux
           script:
             - ./gradlew clean test
+      - step:
+          name: Deploy to test
+          deployment: test
+          runs-on:
+            - self.hosted
+            - linux
+          script:
+            - echo "TEST111"
