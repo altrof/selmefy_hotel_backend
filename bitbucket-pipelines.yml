@@ -6,13 +6,13 @@ pipelines:
       - step:
           name: Test
           script:
-            - gradlew clean test
+            - bash ./gradlew clean test
   branches:
     feature/HOT-42-add-bitbucket-pipeline-for-backend:
       - step:
           name: Test
           script:
-            - gradlew clean test
+            - bash ./gradlew clean test
       - step:
           name: Deploy to test
           deployment: test
