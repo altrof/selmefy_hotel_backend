@@ -11,16 +11,10 @@ pipelines:
     feature/HOT-42-add-bitbucket-pipeline-for-backend:
       - step:
           name: Test
-          runs-on:
-            - self.hosted
-            - linux
           script:
             - ./gradlew clean test
       - step:
           name: Deploy to test
           deployment: test
-          runs-on:
-            - self.hosted
-            - linux
           script:
             - echo "TEST111"
