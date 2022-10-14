@@ -2,6 +2,7 @@ package tech.selmefy.hotel.service.room;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 import tech.selmefy.hotel.controller.room.dto.RoomDTO;
 import tech.selmefy.hotel.mapper.RoomMapper;
 import tech.selmefy.hotel.repository.room.Room;
@@ -15,8 +16,9 @@ public class RoomService {
 
     public final RoomRepository roomRepository;
 
-    public List<Room> getAllRooms() {
-        List<Room> rooms = roomRepository.findAll();
+    @GetMapping("api/room")
+    public List<RoomDTO> getAllRooms() {
+        List<RoomDTO> rooms = roomRepository.findAll();
         return rooms;
     }
 }

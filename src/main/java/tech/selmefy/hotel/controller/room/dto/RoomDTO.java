@@ -9,4 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RoomDTO {
     private Long id;
+
+    private Float size;
+
+    private int floor_id;
+
+    private int room_number;
+
+    private int number_of_beds;
 }
