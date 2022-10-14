@@ -1,4 +1,4 @@
-image: openjdk:17
+image: gradle:7.2.0-jdk17
 
 pipelines:
   pull-requests:
@@ -6,15 +6,18 @@ pipelines:
       - step:
           name: Test
           script:
-            - bash ./gradlew clean test
+            - ./gradlew clean test
   branches:
     feature/HOT-42-add-bitbucket-pipeline-for-backend:
       - step:
           name: Test
           script:
-            - bash ./gradlew clean test
+            - ./gradlew clean test
       - step:
           name: Deploy to test
           deployment: test
+          runs-on:
+            - self.hosted
+            - linux
           script:
             - echo "TEST111"
