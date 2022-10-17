@@ -55,8 +55,8 @@ pipelines:
           script:
             - pipe: atlassian/ssh-run:0.4.1
               variables:
-                SSH_USER_PROD: $SSH_USER_PROD
-                SERVER_IP_PROD: $PROD_SERVER_IP
+                SSH_USER: $SSH_USER_PROD
+                SERVER: $SERVER_IP_PROD
                 MODE: 'command'
                 COMMAND: './deploy-to-prod.sh'
     dev-off:
