@@ -14,7 +14,7 @@ pipelines:
             - ./gradlew wrapper
             - ./gradlew clean test
   branches:
-    feature/HOT-42-add-bitbucket-pipeline-for-backend:
+    master:
       - step:
           runs-on:
             - self.hosted
@@ -59,7 +59,7 @@ pipelines:
                 SERVER: $SERVER_IP_PROD
                 MODE: 'command'
                 COMMAND: './deploy-to-prod.sh'
-    dev-off:
+    feature/HOT-42-add-bitbucket-pipeline-for-backend:
       - step:
           runs-on:
             - self.hosted
