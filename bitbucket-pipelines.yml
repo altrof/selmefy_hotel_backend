@@ -10,8 +10,6 @@ pipelines:
           services:
             - docker
           name: Build and Test
-          caches:
-            - gradle
           script:
             - ./gradlew build
             - ./gradlew clean test
