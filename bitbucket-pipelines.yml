@@ -9,10 +9,24 @@ pipelines:
             - linux
           services:
             - docker
-          name: Build and Test
+          name: Build
+          caches:
+            - gradle
           script:
             - ./gradlew build
-            - ./gradlew clean test
+          artifacts:
+            - build/libs/*-SNAPSHOT.jar
+      - step:
+          runs-on:
+            - self.hosted
+            - linux
+          services:
+            - docker
+          name: Test
+          caches:
+            - gradle
+          script:
+            - ./gradlew test
   branches:
     master:
       - step:
