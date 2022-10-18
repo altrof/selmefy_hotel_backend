@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+    <preConditions>
+        <runningAs  username="postgres"/>
+    </preConditions>
+
+    <changeSet id="HOT-36-add-person-table-to-liquibase_1" author="Norman">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            CREATE TABLE person(
+            id BIGSERIAL PRIMARY KEY NOT NULL,
+            identity_code VARCHAR(255) NOT NULL UNIQUE,
+            first_name VARCHAR(255) NOT NULL,
+            last_name VARCHAR(255) NOT NULL,
+            date_of_birth DATE NOT NULL,
+            time_of_registration TIMESTAMP DEFAULT LOCALTIMESTAMP(0) NOT NULL,
+            CONSTRAINT first_name_not_empty CHECK (REGEXP_REPLACE(first_name, '\s+$', '') &lt;&gt; ''),
+            CONSTRAINT last_name_not_empty CHECK (REGEXP_REPLACE(last_name, '\s+$', '') &lt;&gt; ''),
+            CONSTRAINT date_of_birth_less_than_registration CHECK (date_of_birth &lt; DATE(time_of_registration))
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-36-add-person-table-to-liquibase_2" author="Norman">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            INSERT INTO person (identity_code, first_name, last_name, date_of_birth)
+            VALUES ('38610211234', 'Jaak', 'Sarv', '1986-10-21');
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-36-add-person-table-to-liquibase_3" author="Norman">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            INSERT INTO person (identity_code, first_name, last_name, date_of_birth)
+            VALUES ('49601111234', 'Mari', 'Maja', '1996-01-11');
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-36-add-person-table-to-liquibase_4" author="Norman">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            INSERT INTO person (identity_code, first_name, last_name, date_of_birth)
+            VALUES ('37507312222', 'Karel', 'Sibul', '1975-07-31');
+        </sql>
+    </changeSet>
+
+
+</databaseChangeLog>
