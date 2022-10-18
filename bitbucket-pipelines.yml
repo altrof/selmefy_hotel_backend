@@ -4,23 +4,16 @@ pipelines:
   pull-requests:
     '**':
       - step:
+          caches:
+            - gradle
           runs-on:
             - self.hosted
             - linux
           services:
             - docker
-          name: Build
+          name: Build and Test
           script:
             - ./gradlew build
-            - ls build
-      - step:
-          runs-on:
-            - self.hosted
-            - linux
-          services:
-            - docker
-          name: Test
-          script:
             - ./gradlew test
   branches:
     master:
