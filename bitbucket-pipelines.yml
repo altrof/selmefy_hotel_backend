@@ -9,9 +9,11 @@ pipelines:
             - linux
           services:
             - docker
-          name: Test
+          name: Build and Test
+          caches:
+            - gradle
           script:
-            - ./gradlew wrapper
+            - ./gradlew build
             - ./gradlew clean test
   branches:
     master:
@@ -22,6 +24,8 @@ pipelines:
           services:
             - docker
           name: Build
+          caches:
+            - gradle
           script:
             - ./gradlew build
           artifacts:
@@ -33,6 +37,8 @@ pipelines:
           services:
             - docker
           name: Test
+          caches:
+            - gradle
           script:
             - ./gradlew test
       - step:
@@ -67,6 +73,8 @@ pipelines:
           services:
             - docker
           name: Build
+          caches:
+            - gradle
           script:
             - ./gradlew build
           artifacts:
@@ -78,6 +86,8 @@ pipelines:
           services:
             - docker
           name: Test
+          caches:
+            - gradle
           script:
             - ./gradlew test
       - step:
