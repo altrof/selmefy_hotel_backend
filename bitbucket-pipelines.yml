@@ -59,7 +59,7 @@ pipelines:
                 SERVER: $SERVER_IP_PROD
                 MODE: 'command'
                 COMMAND: './deploy-to-prod.sh'
-    feature/HOT-42-add-bitbucket-pipeline-for-backend:
+    dev:
       - step:
           runs-on:
             - self.hosted

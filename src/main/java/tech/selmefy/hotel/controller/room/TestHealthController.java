@@ -8,6 +8,6 @@ public class TestHealthController {
 
     @GetMapping("/test-health")
     public String getBackendTestHealth() {
-        return "BACKEND TEST HEALTH: OK!";
+        return "BACKEND TEST HEALTH: OK! <-- HARDCODED..";
     }
 }
