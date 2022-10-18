@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+    <preConditions>
+        <runningAs  username="postgres"/>
+    </preConditions>
+
+    <changeSet id="HOT-38-Add-employee_role-table-to-database_1" author="Anti">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            CREATE TABLE employee_role(
+            id SMALLSERIAL PRIMARY KEY,
+            role_name VARCHAR(100))
+            ;
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-38-Add-employee_role-table-to-database_2" author="Anti">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            INSERT INTO employee_role (role_name) VALUES ('Administrator'), ('Administrator2');
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-38-Add-employee_role-table-to-database_3" author="Anti">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            DELETE FROM employee_role WHERE role_name='Administrator2';
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-38-Add-employee_role-table-to-database_4" author="Anti">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            INSERT INTO employee_role (role_name) VALUES ('Guest Service Agent'), ('Security'), ('Housekeeping'), ('Bellman'), ('Maintenance');
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

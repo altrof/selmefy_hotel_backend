@@ -67,7 +67,7 @@ CREATE TABLE user_account (
 );
 
 CREATE TABLE employee_status (
-    id SMALLINT PRIMARY KEY,
+    id SMALLSERIAL PRIMARY KEY,
     status_name VARCHAR(100) NOT NULL
 );
 

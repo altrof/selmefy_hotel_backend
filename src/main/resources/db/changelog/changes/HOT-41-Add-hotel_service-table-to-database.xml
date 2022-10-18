@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+    <preConditions>
+        <runningAs  username="postgres"/>
+    </preConditions>
+
+    <changeSet id="HOT-41-Add-hotel_service-table-to-database_1" author="Anti">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            CREATE TABLE hotel_service(
+            id SMALLSERIAL PRIMARY KEY,
+            role_name VARCHAR(100))
+            ;
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-41-Add-hotel_service-table-to-database_2" author="Anti">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            INSERT INTO hotel_service (role_name) VALUES ('Late check-out'), ('Parking'), ('Bottle of Champagne'),
+                                                         ('Flowers'), ('Shuttle'), ('Alarm Clock'),
+                                                         ('Massage'),
+                                                         ('Restaurant');
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
