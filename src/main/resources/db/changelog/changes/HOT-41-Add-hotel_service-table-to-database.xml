@@ -8,9 +8,6 @@
 		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
 		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
 		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
-    <preConditions>
-        <runningAs  username="postgres"/>
-    </preConditions>
 
     <changeSet id="HOT-41-Add-hotel_service-table-to-database_1" author="Anti">
         <sql dbms="postgresql"
