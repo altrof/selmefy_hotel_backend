@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet id="HOT-45-Add-employee-table-to-database_1" author="Robert-Valdmaa">
+        <sql dbms="postgresql" splitStatements="true">
+            CREATE TABLE employee (
+            person_id BIGINT PRIMARY KEY NOT NULL,
+            person_identity_code VARCHAR(255) NOT NULL,
+            employee_start_date DATE NOT NULL,
+            employee_end_date DATE NOT NULL,
+            employee_role SMALLINT NOT NULL,
+            employee_status SMALLINT NOT NULL,
+            CONSTRAINT fk_person_id FOREIGN KEY (person_id) REFERENCES person (id) ON DELETE NO ACTION ON UPDATE CASCADE,
+            CONSTRAINT fk_person_identity_code FOREIGN KEY (person_identity_code) REFERENCES person (identity_code) ON DELETE NO ACTION ON UPDATE CASCADE,
+            CONSTRAINT fk_employee_role FOREIGN KEY (employee_role) REFERENCES employee_role (id) ON DELETE NO ACTION ON UPDATE CASCADE,
+            CONSTRAINT fk_employee_status FOREIGN KEY (employee_status) REFERENCES employee_status (id) ON DELETE NO ACTION ON UPDATE CASCADE
+            );
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
