@@ -1,10 +1,25 @@
+# THIS DOCKER COMPOSE FOR LOCAL USAGE
+
 version: "3.7" #have to use it unless you upgrade docker-compose
 services:
-    web-project:
-        image: nkuusik/web-project:latest
-        container_name: web-project
-        restart: always
+    hotel_backend:
+        container_name: hotel_backend
+        build:
+            context: .
+            dockerfile: Dockerfile
+        # If you want change port, then please change only first port,
+        # and also don't forget to change port in frontend app
         ports:
-            - 8080:8080
+            - "8080:8080"
+        depends_on:
+            - hotel_db
+    hotel_db:
+        image: postgres:14.1
+        restart: always
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+        ports:
+            - '5432:5432'
         volumes:
-            - /opt/web-project/application.properties:/app/application.properties
+            - ./postgres-data:/var/lib/postgresql/data

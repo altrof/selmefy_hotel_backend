@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import tech.selmefy.hotel.controller.room.dto.RoomDTO;
 
 @Repository
-public interface RoomRepository extends JpaRepository<RoomDTO, Long> {
+public interface RoomRepository extends JpaRepository<Room, Long> {
 }
