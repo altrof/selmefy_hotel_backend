@@ -7,6 +7,7 @@ import tech.selmefy.hotel.mapper.RoomMapper;
 import tech.selmefy.hotel.repository.room.Room;
 import tech.selmefy.hotel.repository.room.RoomRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,8 +16,13 @@ public class RoomService {
 
     public final RoomRepository roomRepository;
 
-    public List<Room> getAllRooms() {
+    public List<RoomDTO> getAllRooms() {
         List<Room> rooms = roomRepository.findAll();
-        return rooms;
+        List<RoomDTO> roomDTOList = new ArrayList<>();
+        for (Room room : rooms) {
+            RoomDTO roomDTO = RoomMapper.INSTANCE.toDTO(room);
+            roomDTOList.add(roomDTO);
+        }
+        return roomDTOList;
     }
 }
