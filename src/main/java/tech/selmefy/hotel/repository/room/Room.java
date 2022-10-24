@@ -34,4 +34,5 @@ public class Room {
 
     @Enumerated(EnumType.STRING)
     private RoomType roomType;
+
 }

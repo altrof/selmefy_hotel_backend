@@ -91,7 +91,7 @@ CREATE TABLE employee (
 
 CREATE TABLE hotel_service (
     id SMALLSERIAL PRIMARY KEY,
-    hotel_service_name VARCHAR(255) NOT NULL
+    hotel_service_name VARCHAR(255) NOT NULL UNIQUE
 );
 
 CREATE TABLE hotel_service_order (

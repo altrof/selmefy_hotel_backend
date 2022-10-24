@@ -12,11 +12,9 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class RoomController {
-
     public final RoomService roomService;
-
     @GetMapping("/rooms")
-    public List<Room> getAllRooms() {
+    public List<RoomDTO> getAllRooms() {
         return roomService.getAllRooms();
     }
 }
