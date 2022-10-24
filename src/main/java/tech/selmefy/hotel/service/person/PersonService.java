@@ -7,14 +7,12 @@ import tech.selmefy.hotel.mapper.PersonMapper;
 import tech.selmefy.hotel.repository.person.Person;
 import tech.selmefy.hotel.repository.person.PersonRepository;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class PersonService {
-
     public final PersonRepository personRepository;
 
     public List<PersonDTO> getAllPeople() {

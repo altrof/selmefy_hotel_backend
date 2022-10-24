@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @Entity(name = "person")
 @AllArgsConstructor
@@ -35,7 +36,7 @@ public class Person {
     private String lastName;
 
     @Column(nullable = false)
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @Column(nullable = false)
     private Timestamp timeOfRegistration = new Timestamp(System.currentTimeMillis());
