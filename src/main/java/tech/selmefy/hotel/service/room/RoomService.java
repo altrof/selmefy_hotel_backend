@@ -27,9 +27,13 @@ public class RoomService {
         return roomDTOList;
     }
 
-    public List<RoomDTO> getRoomsByType(String roomType) {
+    public List<RoomDTO> getRoomByType(String roomType) {
         return roomRepository.findRoomsByRoomType(RoomType.valueOf(roomType.toUpperCase())).stream()
                 .map(RoomMapper.INSTANCE::toDTO)
                 .toList();
+    }
+
+    public RoomDTO getRoomsById(Long id) {
+        return roomRepository.findById(id).map(RoomMapper.INSTANCE::toDTO).get();
     }
 }

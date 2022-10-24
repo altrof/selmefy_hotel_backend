@@ -20,6 +20,11 @@ public class RoomController {
 
     @GetMapping("/rooms/{roomType}")
     public List<RoomDTO> getRoomsByType(@PathVariable String roomType) {
-        return roomService.getRoomsByType(roomType);
+        return roomService.getRoomByType(roomType);
+    }
+
+    @GetMapping("/room/{roomId}")
+    public RoomDTO getRoomById(@PathVariable Long roomId) {
+        return roomService.getRoomsById(roomId);
     }
 }
