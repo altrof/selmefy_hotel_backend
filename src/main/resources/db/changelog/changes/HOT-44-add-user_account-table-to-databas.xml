@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet id="HOT-44-add-user_account-table-to-database_1" author="Norman">
+        <sql dbms="postgresql">
+            CREATE TABLE user_account (
+            person_id BIGINT PRIMARY KEY,
+            person_identity_code VARCHAR(255) NOT NULL,
+            e_mail VARCHAR(255) UNIQUE NOT NULL,
+            account_user_name VARCHAR(255) UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            is_client BOOLEAN NOT NULL DEFAULT FALSE, -- Alternatively additional table for account types
+            is_employee BOOLEAN NOT NULL DEFAULT FALSE,
+            CONSTRAINT fk_person_id FOREIGN KEY (person_id) REFERENCES person (id) ON DELETE NO ACTION ON UPDATE CASCADE,
+            CONSTRAINT fk_person_identity_code FOREIGN KEY (person_identity_code) REFERENCES person (identity_code) ON DELETE NO ACTION ON UPDATE CASCADE,
+            CONSTRAINT client_and_employee_cannot_both_be_false CHECK
+            (is_client IS TRUE OR is_employee IS TRUE)
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-44-add-user_account-table-to-database_2" author="Norman">
+        <sql dbms="postgresql">
+            CREATE EXTENSION pgcrypto;
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-44-add-user_account-table-to-database_3" author="Norman">
+        <sql dbms="postgresql">
+            INSERT INTO user_account
+            (person_id, person_identity_code, e_mail, account_user_name, password, is_client, is_employee)
+            SELECT person.id, person.identity_code, 'myemail@email.something', 'sibul',
+            crypt('salajane', gen_salt('bf')), -- See https://x-team.com/blog/storing-secure-passwords-with-postgresql/
+            false, true
+            FROM person WHERE person.identity_code='37507312222';
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-44-add-user_account-table-to-database_4" author="Norman">
+        <sql dbms="postgresql">
+            INSERT INTO user_account
+            (person_id, person_identity_code, e_mail, account_user_name, password, is_client, is_employee)
+            SELECT person.id, person.identity_code, 'mari@blablabla.yahoo', 'marimaja',
+            crypt('123!password', gen_salt('bf')), -- See https://x-team.com/blog/storing-secure-passwords-with-postgresql/
+            true, false
+            FROM person WHERE person.identity_code='49601111234';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
