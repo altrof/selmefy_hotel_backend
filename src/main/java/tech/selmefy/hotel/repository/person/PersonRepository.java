@@ -1,8 +1,8 @@
-package tech.selmefy.hotel.repository.room;
+package tech.selmefy.hotel.repository.person;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RoomRepository extends JpaRepository<Room, Long> {
+public interface PersonRepository extends JpaRepository<Person, Long> {
 }
