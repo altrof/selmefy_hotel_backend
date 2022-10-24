@@ -2,15 +2,11 @@ package tech.selmefy.hotel.service.person;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 import tech.selmefy.hotel.controller.room.dto.PersonDTO;
-import tech.selmefy.hotel.controller.room.dto.RoomDTO;
 import tech.selmefy.hotel.mapper.PersonMapper;
-import tech.selmefy.hotel.mapper.RoomMapper;
 import tech.selmefy.hotel.repository.person.Person;
 import tech.selmefy.hotel.repository.person.PersonRepository;
-import tech.selmefy.hotel.repository.room.Room;
-import tech.selmefy.hotel.repository.room.RoomRepository;
+
 
 import java.util.ArrayList;
 import java.util.List;
