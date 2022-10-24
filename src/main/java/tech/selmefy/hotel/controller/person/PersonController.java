@@ -3,6 +3,7 @@ package tech.selmefy.hotel.controller.person;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import tech.selmefy.hotel.controller.room.dto.PersonDTO;
 import tech.selmefy.hotel.repository.person.Person;
 import tech.selmefy.hotel.service.person.PersonService;
 import tech.selmefy.hotel.service.room.RoomService;
@@ -14,7 +15,7 @@ import java.util.List;
 public class PersonController {
     public final PersonService personService;
     @GetMapping("/person")
-    public List<Person> getAllPeople() {
+    public List<PersonDTO> getAllPeople() {
         return personService.getAllPeople();
     }
 }

@@ -3,7 +3,9 @@ package tech.selmefy.hotel.service.person;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
+import tech.selmefy.hotel.controller.room.dto.PersonDTO;
 import tech.selmefy.hotel.controller.room.dto.RoomDTO;
+import tech.selmefy.hotel.mapper.PersonMapper;
 import tech.selmefy.hotel.mapper.RoomMapper;
 import tech.selmefy.hotel.repository.person.Person;
 import tech.selmefy.hotel.repository.person.PersonRepository;
@@ -19,14 +21,13 @@ public class PersonService {
 
     public final PersonRepository personRepository;
 
-    public List<Person> getAllPeople() {
+    public List<PersonDTO> getAllPeople() {
         List<Person> people = personRepository.findAll();
-        /*
         List<PersonDTO> personDTOList = new ArrayList<>();
         for (Person person : people) {
             PersonDTO personDTO = PersonMapper.INSTANCE.toDTO(person);
             personDTOList.add(personDTO);
-        }*/
-        return people;
+        }
+        return personDTOList;
     }
 }
