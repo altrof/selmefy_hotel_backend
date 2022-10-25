@@ -1,5 +1,6 @@
 package tech.selmefy.hotel.controller.room;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,6 +10,7 @@ import tech.selmefy.hotel.service.room.RoomService;
 
 import java.util.List;
 
+@Api(tags = "Room")
 @RestController
 @RequiredArgsConstructor
 public class RoomController {
