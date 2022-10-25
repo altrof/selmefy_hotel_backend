@@ -15,4 +15,11 @@
         </sql>
     </changeSet>
 
+    <changeSet id="HOT-61-capitalize-entries-employee-role-employee-status-hotel-service_2" author="Norman">
+        <sql dbms="postgresql">
+            ALTER TABLE hotel_service
+            RENAME COLUMN role_name TO hotel_service_name;
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
