@@ -31,7 +31,8 @@
             INSERT INTO employee
             (person_id, person_identity_code, employee_start_date, employee_role, employee_status)
             SELECT person.id, person.identity_code, '2010-11-03', employee_role.id, employee_status.id
-            FROM person, employee_role, employee_status WHERE person.identity_code='37507312222' AND employee_role.role_name='Housekeeping' AND employee_status.status_name='Working'
+            FROM person, employee_role, employee_status
+            WHERE person.identity_code='37507312222' AND employee_role.role_name='Housekeeping' AND employee_status.status_name='Working'
             ;
         </sql>
     </changeSet>
@@ -41,7 +42,8 @@
             INSERT INTO employee
             (person_id, person_identity_code, employee_start_date, employee_role, employee_status)
             SELECT person.id, person.identity_code, '2015-06-04', employee_role.id, employee_status.id
-            FROM person, employee_role, employee_status WHERE person.identity_code='38610211234' AND employee_role.role_name='Administrator' AND employee_status.status_name='Working'
+            FROM person, employee_role, employee_status
+            WHERE person.identity_code='38610211234' AND employee_role.role_name='Administrator' AND employee_status.status_name='Working'
             ;
         </sql>
     </changeSet>
