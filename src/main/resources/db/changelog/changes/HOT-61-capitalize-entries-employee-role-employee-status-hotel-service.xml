@@ -22,4 +22,16 @@
         </sql>
     </changeSet>
 
+    <changeSet id="HOT-61-capitalize-entries-employee-role-employee-status-hotel-service_3" author="Norman">
+        <sql dbms="postgresql">
+            UPDATE employee_role SET role_name = UPPER(role_name);
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-61-capitalize-entries-employee-role-employee-status-hotel-service_4" author="Norman">
+        <sql dbms="postgresql">
+            UPDATE employee_status SET status_name = UPPER(status_name);
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
