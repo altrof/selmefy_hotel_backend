@@ -14,11 +14,8 @@ import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 
 import java.util.List;
-import java.util.Set;
 
-import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Collections.singletonList;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Configuration
 public class SwaggerConfig {
@@ -27,12 +24,9 @@ public class SwaggerConfig {
 
     @Bean
     public Docket api() {
-        final Set<String> defaultContentType = newHashSet(APPLICATION_JSON_VALUE);
 
         return new Docket(DocumentationType.SWAGGER_2)
             .apiInfo(apiInfo())
-            .produces(defaultContentType)
-            .consumes(defaultContentType)
             .securityContexts(singletonList(securityContext()))
             .securitySchemes(List.of(apiKey()))
             .select()

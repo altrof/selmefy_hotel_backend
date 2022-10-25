@@ -25,6 +25,7 @@ dependencies {
 	implementation 'org.liquibase:liquibase-core'
 	implementation 'org.mapstruct:mapstruct:1.5.2.Final'
 
+
 	implementation "io.springfox:springfox-swagger2:$springfoxSwaggerVersion"
 	implementation "io.springfox:springfox-swagger-ui:$springfoxSwaggerVersion"
 	implementation "io.springfox:springfox-bean-validators:$springfoxSwaggerVersion"
