@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet id="HOT-43-Add-booking-table-to-database_1" author="Anti">
+        <sql dbms="postgresql" splitStatements="true">
+            CREATE TABLE booking (
+            id BIGSERIAL PRIMARY KEY,
+            room_id BIGINT NOT NULL,
+            person_id BIGSERIAL NOT NULL,
+            person_identity_code VARCHAR(255) NOT NULL,
+            price SMALLINT NOT NULL,
+            check_in_date DATE NOT NULL,
+            check_out_date DATE NOT NULL,
+            comments VARCHAR(1000),
+            late_check_out BOOLEAN NOT NULL DEFAULT FALSE,
+            CONSTRAINT fk_room_id FOREIGN KEY (room_id) REFERENCES room (id) ON DELETE NO ACTION ON UPDATE CASCADE,
+            CONSTRAINT fk_person_id FOREIGN KEY (person_id) REFERENCES person (id) ON DELETE NO ACTION ON UPDATE CASCADE,
+            CONSTRAINT fk_person_identity_code FOREIGN KEY (person_identity_code) REFERENCES person (identity_code) ON DELETE NO ACTION ON UPDATE CASCADE,
+            CONSTRAINT check_in_not_after_check_out CHECK (check_out_date > check_in_date ),
+            CONSTRAINT check_in_not_in_past CHECK (check_in_date >= DATE(LOCALTIMESTAMP(0))));
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-43-Add-booking-table-to-database_2" author="Anti">
+        <sql dbms="postgresql" splitStatements="true">
+            INSERT INTO booking
+            (room_id, person_id, person_identity_code, price, check_in_date, check_out_date, comments, late_check_out)
+            SELECT room.id, person.id, person.identity_code, 100, '2022-12-24', '2022-12-26', 'probably Santa', FALSE
+            FROM room, person
+            WHERE room.id=1 AND person.identity_code='37507312222'
+            ;
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-43-Add-booking-table-to-database_3" author="Anti">
+        <sql dbms="postgresql" splitStatements="true">
+            INSERT INTO booking
+            (room_id, person_id, person_identity_code, price, check_in_date, check_out_date, comments, late_check_out)
+            SELECT room.id, person.id, person.identity_code, 1000, '2022-12-31', '2023-01-01', 'got money to blow', TRUE
+            FROM room, person
+            WHERE room.id=1 AND person.identity_code='49601111234'
+            ;
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-43-Add-booking-table-to-database_4" author="Anti">
+        <sql dbms="postgresql" splitStatements="true">
+            INSERT INTO booking
+            (room_id, person_id, person_identity_code, price, check_in_date, check_out_date, comments, late_check_out)
+            SELECT room.id, person.id, person.identity_code, 300, '2022-12-26', '2023-12-27', 'could I get some flowers to room?', FALSE
+            FROM room, person
+            WHERE room.id=1 AND person.identity_code='38610211234'
+            ;
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-43-Add-booking-table-to-database_5" author="Anti">
+        <sql dbms="postgresql" splitStatements="true">
+            INSERT INTO booking
+            (room_id, person_id, person_identity_code, price, check_in_date, check_out_date, comments, late_check_out)
+            SELECT room.id, person.id, person.identity_code, 555, '2022-12-05', '2023-12-06', '', FALSE
+            FROM room, person
+            WHERE room.id=1 AND person.identity_code='37507312222'
+            ;
+        </sql>
+    </changeSet>
+</databaseChangeLog>
