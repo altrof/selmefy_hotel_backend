@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet id="HOT-46-Add-hotel-service-order-to-database-1" author="Rivo">
+        <sql dbms="postgresql" splitStatements="true">
+            CREATE TABLE hotel_service_order (
+            id BIGSERIAL PRIMARY KEY NOT NULL,
+            service_type SMALLINT NOT NULL,
+            person_id VARCHAR(255) NOT NULL,
+            order_time TIMESTAMP DEFAULT LOCALTIMESTAMP(0) NOT NULL,
+            price SMALLINT NOT NULL,
+            comments VARCHAR(1000),
+            CONSTRAINT fk_service_type FOREIGN KEY (service_type) REFERENCES hotel_service (id) ON DELETE NO ACTION ON UPDATE CASCADE,
+            CONSTRAINT fk_person_id FOREIGN KEY (person_id) REFERENCES person (identity_code) ON DELETE NO ACTION ON UPDATE CASCADE,
+            CONSTRAINT order_time_not_in_past CHECK (order_time >= DATE(LOCALTIMESTAMP(0)))
+        );
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-46-Add-hotel-service-order-to-database-2" author="Rivo">
+        <sql dbms="postgresql">
+            INSERT INTO hotel_service_order
+            (service_type, person_id, order_time, price, comments)
+            SELECT hotel_service.id, person.identity_code, '2022-12-26', 20, 'Parking'
+            FROM person, hotel_service
+            WHERE person.identity_code='49601111234' AND hotel_service.id='2'
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-46-Add-hotel-service-order-to-database-3" author="Rivo">
+        <sql dbms="postgresql">
+            INSERT INTO hotel_service_order
+            (service_type, person_id, order_time, price, comments)
+            SELECT hotel_service.id, person.identity_code, '2022-12-30', 30, 'Restaurant'
+            FROM person, hotel_service
+            WHERE person.identity_code='38610211234' AND hotel_service.id='8'
+        </sql>
+    </changeSet>
+</databaseChangeLog>
