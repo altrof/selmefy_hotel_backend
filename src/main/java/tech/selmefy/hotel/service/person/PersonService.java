@@ -18,7 +18,7 @@ import static tech.selmefy.hotel.validators.ObjectUtilityValidator.IsNullOrEmpty
 @Service
 @AllArgsConstructor
 public class PersonService {
-    public static PersonRepository personRepository;
+    public final PersonRepository personRepository;
 
     public List<PersonDTO> getAllPeople() {
         List<Person> people = personRepository.findAll();
@@ -30,7 +30,7 @@ public class PersonService {
         return personDTOList;
     }
 
-    public static void createNewPerson(@NonNull Person person) {
+    public void createNewPerson(@NonNull Person person) {
         if(IsNullOrEmpty(person.getFirstName()) || IsNullOrEmpty(person.getLastName())) {
             throw new ApiRequestException("Firstname or lastname can not to be null.");
         }
@@ -40,10 +40,6 @@ public class PersonService {
         }
 
         if(IsNullOrEmpty(person.getDateOfBirth())) {
-            throw new ApiRequestException("Birthday date should be present.");
-        }
-
-        if(IsNullOrEmpty(person.getTimeOfRegistration())) {
             throw new ApiRequestException("Birthday date should be present.");
         }
 
