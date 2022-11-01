@@ -34,6 +34,6 @@ public class RoomService {
     }
 
     public RoomDTO getRoomById(Long id) {
-        return roomRepository.findById(id).map(RoomMapper.INSTANCE::toDTO).orElseThrow();
+        return roomRepository.findById(id).map(RoomMapper.INSTANCE::toDTO).get();
     }
 }
