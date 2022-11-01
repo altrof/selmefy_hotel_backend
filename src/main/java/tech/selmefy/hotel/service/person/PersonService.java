@@ -1,7 +1,6 @@
 package tech.selmefy.hotel.service.person;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tech.selmefy.hotel.controller.room.dto.PersonDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
@@ -13,7 +12,7 @@ import org.springframework.lang.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static tech.selmefy.hotel.validators.ObjectUtilityValidator.IsNullOrEmpty;
+import static tech.selmefy.hotel.validators.ObjectUtilityValidator.isNullOrEmpty;
 
 @Service
 @AllArgsConstructor
@@ -31,15 +30,15 @@ public class PersonService {
     }
 
     public void createNewPerson(@NonNull Person person) {
-        if(IsNullOrEmpty(person.getFirstName()) || IsNullOrEmpty(person.getLastName())) {
+        if(isNullOrEmpty(person.getFirstName()) || isNullOrEmpty(person.getLastName())) {
             throw new ApiRequestException("Firstname or lastname can not to be null.");
         }
 
-        if(IsNullOrEmpty(person.getIdentityCode())) {
+        if(isNullOrEmpty(person.getIdentityCode())) {
             throw new ApiRequestException("Identity code is required in request body.");
         }
 
-        if(IsNullOrEmpty(person.getDateOfBirth())) {
+        if(isNullOrEmpty(person.getDateOfBirth())) {
             throw new ApiRequestException("Birthday date should be present.");
         }
 

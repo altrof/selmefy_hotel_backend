@@ -11,6 +11,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class BookingDTO {
     private Long roomId;
+    /*
+    We can also add personId if needed,
+    but for now let's only expose personIdentityCode on the DTO
+    and see how it goes.
+    */
     private String personIdentityCode;
     private int price;
     private LocalDate checkInDate;
