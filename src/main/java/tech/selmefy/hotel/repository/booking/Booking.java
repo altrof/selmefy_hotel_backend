@@ -15,7 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import java.time.LocalTime;
+import java.time.LocalDate;
 
 @Entity(name = "booking")
 @AllArgsConstructor
@@ -51,10 +51,10 @@ public class Booking {
     private int price;
 
     @Column(nullable = false)
-    private LocalTime checkInDate;
+    private LocalDate checkInDate;
 
     @Column(nullable = false)
-    private LocalTime checkOutDate;
+    private LocalDate checkOutDate;
 
     @Column(length = 1000)
     private String comments;
