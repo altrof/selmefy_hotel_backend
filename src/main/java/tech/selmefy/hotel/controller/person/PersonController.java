@@ -25,5 +25,4 @@ public class PersonController {
     public void createNewPerson(@RequestBody Person person) {
         personService.createNewPerson(person);
     }
-
 }
