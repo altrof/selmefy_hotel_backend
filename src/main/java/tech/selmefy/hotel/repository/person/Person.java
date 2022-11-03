@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 
@@ -40,5 +39,4 @@ public class Person {
 
     @Column(nullable = false)
     private Timestamp timeOfRegistration = new Timestamp(System.currentTimeMillis());
-    
 }

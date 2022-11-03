@@ -30,20 +30,20 @@ public class PersonService {
         return personDTOList;
     }
 
-    public void createNewPerson(@NonNull Person person) {
-        if(IsNullOrEmpty(person.getFirstName()) || IsNullOrEmpty(person.getLastName())) {
+    public void createNewPerson(@NonNull PersonDTO personDTO) {
+        if(IsNullOrEmpty(personDTO.getFirstName()) || IsNullOrEmpty(personDTO.getLastName())) {
             throw new ApiRequestException("Firstname or lastname can not to be null.");
         }
 
-        if(IsNullOrEmpty(person.getIdentityCode())) {
+        if(IsNullOrEmpty(personDTO.getIdentityCode())) {
             throw new ApiRequestException("Identity code is required in request body.");
         }
 
-        if(IsNullOrEmpty(person.getDateOfBirth())) {
+        if(IsNullOrEmpty(personDTO.getDateOfBirth())) {
             throw new ApiRequestException("Birthday date should be present.");
         }
 
+        Person person = PersonMapper.INSTANCE.toEntity(personDTO);
         personRepository.save(person);
     }
-
 }
