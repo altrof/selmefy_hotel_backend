@@ -1,9 +1,8 @@
-package tech.selmefy.hotel.controller.room.dto;
+package tech.selmefy.hotel.controller.person.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.sql.Date;
 import java.time.LocalDate;
 
 @Data
