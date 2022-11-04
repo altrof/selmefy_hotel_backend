@@ -2,7 +2,7 @@ package tech.selmefy.hotel.service.person;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import tech.selmefy.hotel.controller.room.dto.PersonDTO;
+import tech.selmefy.hotel.controller.person.dto.PersonDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.mapper.PersonMapper;
 import tech.selmefy.hotel.repository.person.Person;
