@@ -1,4 +1,4 @@
-package tech.selmefy.hotel.controller.room.dto;
+package tech.selmefy.hotel.controller.person.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

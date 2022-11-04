@@ -7,7 +7,9 @@ import static java.util.Objects.isNull;
 
 @Component
 public class ObjectUtilityValidator {
+    private ObjectUtilityValidator() {
 
+    }
     public static <T> Boolean isNullOrEmpty(T element) {
         return isNull(element) || !hasText(String.valueOf(element));
     }
