@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import tech.selmefy.hotel.controller.room.dto.RoomAvailableHistoryDTO;
 import tech.selmefy.hotel.controller.room.dto.RoomDTO;
@@ -25,8 +27,9 @@ public class RoomController {
         return roomService.getAllRooms();
     }
 
-    @GetMapping("/{roomType}")
-    public List<RoomDTO> getRoomsByType(@PathVariable String roomType) {
+    @ResponseBody
+    @GetMapping(params = {"roomType"})
+    public List<RoomDTO> getRoomsByType(@RequestParam(name="roomType") String roomType) {
         return roomService.getRoomsByType(roomType);
     }
 
