@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 
@@ -19,7 +20,11 @@ import java.time.LocalDate;
 @Getter
 @Setter
 
-public class Person {
+public class Person implements Serializable {
+    /*
+    We need to implement Serializable for Person because non-PK column identityCode is used as foreign key elsewhere.
+    See discussion at: https://hibernate.atlassian.net/browse/HHH-7668
+    */
 
     @Id
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
@@ -39,5 +44,4 @@ public class Person {
 
     @Column(nullable = false)
     private Timestamp timeOfRegistration = new Timestamp(System.currentTimeMillis());
-    
 }
