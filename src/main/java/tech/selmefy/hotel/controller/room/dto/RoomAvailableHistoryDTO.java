@@ -4,14 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RoomDTO {
-    private Float size;
-    private int floorId;
-    private int roomNumber;
-    private int numberOfBeds;
-    private String roomType;
+public class RoomAvailableHistoryDTO {
+
+    private Long roomId;
+
     private Boolean roomAvailableForBooking;
+
+    private Timestamp createdDtime;
 }
