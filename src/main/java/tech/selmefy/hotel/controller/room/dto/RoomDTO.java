@@ -13,5 +13,4 @@ public class RoomDTO {
     private int roomNumber;
     private int numberOfBeds;
     private String roomType;
-
 }
