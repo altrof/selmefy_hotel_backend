@@ -24,5 +24,4 @@ public class PersonController {
     public void createNewPerson(@RequestBody PersonDTO personDTO) {
         personService.createNewPerson(personDTO);
     }
-
 }
