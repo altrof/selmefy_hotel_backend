@@ -20,7 +20,10 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -50,26 +53,41 @@ public class RoomService {
         return roomRepository.findById(id).map(RoomMapper.INSTANCE::toDTO).orElseThrow();
     }
 
+    /**
+     * Returns a list of RoomDTO-s that are available for the whole duration between the provided dates.
+     * @param fromDate start date of the search
+     * @param toDate end date of the search
+     * @return List of RoomDTO-s that available between the two provided dates.
+     */
     public List<RoomDTO> getRoomsAvailableBetweenDates(LocalDate fromDate, LocalDate toDate) {
         if (fromDate.isEqual(toDate) || fromDate.isAfter(toDate)) {
             throw new IllegalArgumentException("Start date must be earlier than end date");
         }
+        Map<Long, Room> rooms = roomRepository.findAll().stream()
+                .collect(Collectors.toMap(Room::getId, Function.identity()));
         List<BookingDTO> bookings = bookingService.getAllBookings();
-        List<Room> rooms = roomRepository.findAll();
+
         for (BookingDTO booking : bookings) {
-            for (Room room : rooms) {
-                if (Objects.equals(booking.getRoomId(), room.getId()) && Boolean.TRUE.equals(room.getRoomAvailableForBooking())) {
-                    if (fromDate.isBefore(booking.getCheckInDate())) {
-                        if (toDate.isAfter(booking.getCheckInDate())) {
-                            rooms.remove(room);
-                        }
-                    } else if (fromDate.isBefore(booking.getCheckOutDate())) {
-                        rooms.remove(room);
+            Optional<Room> room = Optional.ofNullable(rooms.get(booking.getRoomId()));
+            if (room.isPresent() && Boolean.TRUE.equals(room.get().getRoomAvailableForBooking())) {
+                if (fromDate.isBefore(booking.getCheckInDate())) {
+                    if (toDate.isAfter(booking.getCheckInDate())) {
+                        rooms.remove(booking.getRoomId());
                     }
+                } else if (fromDate.isBefore(booking.getCheckOutDate())) {
+                    rooms.remove(booking.getRoomId());
                 }
             }
         }
-        return rooms.stream().map(RoomMapper.INSTANCE::toDTO).toList();
+
+        List<RoomDTO> output = new ArrayList<>();
+        rooms.forEach((key, room) -> transformToRoomDTOAndPutToList(room, output));
+
+        return output;
+    }
+    private void transformToRoomDTOAndPutToList(Room room, List<RoomDTO> roomDTOList) {
+        RoomDTO roomDTO = RoomMapper.INSTANCE.toDTO(room);
+        roomDTOList.add(roomDTO);
     }
 
     public List<RoomAvailableHistoryDTO> getRoomAvailableHistoryByRoomId(Long roomId) {
