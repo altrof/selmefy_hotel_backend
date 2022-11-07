@@ -2,7 +2,7 @@ package tech.selmefy.hotel.service.person;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import tech.selmefy.hotel.controller.room.dto.PersonDTO;
+import tech.selmefy.hotel.controller.person.dto.PersonDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.mapper.PersonMapper;
 import tech.selmefy.hotel.repository.person.Person;
@@ -28,21 +28,21 @@ public class PersonService {
         }
         return personDTOList;
     }
-
-    public void createNewPerson(@NonNull Person person) {
-        if(isNullOrEmpty(person.getFirstName()) || isNullOrEmpty(person.getLastName())) {
+    
+    public void createNewPerson(@NonNull PersonDTO personDTO) {
+        if(isNullOrEmpty(personDTO.getFirstName()) || isNullOrEmpty(personDTO.getLastName())) {
             throw new ApiRequestException("Firstname or lastname can not to be null.");
         }
 
-        if(isNullOrEmpty(person.getIdentityCode())) {
+        if(isNullOrEmpty(personDTO.getIdentityCode())) {
             throw new ApiRequestException("Identity code is required in request body.");
         }
 
-        if(isNullOrEmpty(person.getDateOfBirth())) {
+        if(isNullOrEmpty(personDTO.getDateOfBirth())) {
             throw new ApiRequestException("Birthday date should be present.");
         }
 
+        Person person = PersonMapper.INSTANCE.toEntity(personDTO);
         personRepository.save(person);
     }
-
 }

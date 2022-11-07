@@ -44,5 +44,4 @@ public class Person implements Serializable {
 
     @Column(nullable = false)
     private Timestamp timeOfRegistration = new Timestamp(System.currentTimeMillis());
-    
 }
