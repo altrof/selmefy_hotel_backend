@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet id="HOT-61-capitalize-entries-employee-role-employee-status-hotel-service_1" author="Norman">
+        <sql dbms="postgresql">
+            UPDATE hotel_service SET role_name = UPPER(role_name);
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-61-capitalize-entries-employee-role-employee-status-hotel-service_2" author="Norman">
+        <sql dbms="postgresql">
+            ALTER TABLE hotel_service
+            RENAME COLUMN role_name TO hotel_service_name;
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-61-capitalize-entries-employee-role-employee-status-hotel-service_3" author="Norman">
+        <sql dbms="postgresql">
+            UPDATE employee_role SET role_name = UPPER(role_name);
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-61-capitalize-entries-employee-role-employee-status-hotel-service_4" author="Norman">
+        <sql dbms="postgresql">
+            UPDATE employee_status SET status_name = UPPER(status_name);
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-61-capitalize-entries-employee-role-employee-status-hotel-service_5" author="Norman">
+        <sql dbms="postgresql">
+            UPDATE employee_status SET status_name='ON_VACATION' WHERE status_name='ON VACATION';
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-61-capitalize-entries-employee-role-employee-status-hotel-service_6" author="Norman">
+        <sql dbms="postgresql">
+            UPDATE hotel_service SET hotel_service_name='LATE_CHECK_OUT' WHERE hotel_service_name='LATE CHECK-OUT';
+            UPDATE hotel_service SET hotel_service_name='BOTTLE_OF_CHAMPAGNE' WHERE hotel_service_name='BOTTLE OF CHAMPAGNE';
+            UPDATE hotel_service SET hotel_service_name='ALARM_CLOCK' WHERE hotel_service_name='ALARM CLOCK';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

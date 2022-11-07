@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet id="HOT-39-Add-employee_status-table-to-database_1" author="Robert">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            CREATE TABLE employee_status (
+            id SMALLSERIAL PRIMARY KEY,
+            status_name VARCHAR(100) NOT NULL
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-39-Add-employee_status-table-to-database_2" author="Robert">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            INSERT INTO employee_status (status_name) VALUES ('Working'), ('On Vacation'), ('Terminated') ;
+        </sql>
+    </changeSet>
+
+
+</databaseChangeLog>
