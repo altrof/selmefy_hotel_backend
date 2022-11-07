@@ -58,7 +58,7 @@ public class RoomService {
         List<Room> rooms = roomRepository.findAll();
         for (BookingDTO booking : bookings) {
             for (Room room : rooms) {
-                if (Objects.equals(booking.getRoomId(), room.getId())) {
+                if (Objects.equals(booking.getRoomId(), room.getId()) && Boolean.TRUE.equals(room.getRoomAvailableForBooking())) {
                     if (fromDate.isBefore(booking.getCheckInDate())) {
                         if (toDate.isAfter(booking.getCheckInDate())) {
                             rooms.remove(room);
