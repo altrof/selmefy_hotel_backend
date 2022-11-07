@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet id="HOT-50-create-new-table-room-type" author="Aleksandr-Trofimov">
+        <sql dbms="postgresql">
+            CREATE TABLE room_type (
+                type_name VARCHAR(10) UNIQUE
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-50-add-data-room-type-to-room-table" author="Aleksandr-Trofimov">
+        <sql dbms="postgresql">
+            INSERT INTO room_type (type_name)
+            VALUES ('REGULAR'), ('DELUXE'), ('KING_SIZE'), ('ECONOMY');
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-50-add-new-column-in-room-table" author="Aleksandr-Trofimov">
+        <sql dbms="postgresql">
+            ALTER TABLE room
+                ADD COLUMN room_type VARCHAR(10);
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-50-add-room-type-for-first-room" author="Aleksandr-Trofimov">
+        <sql dbms="postgresql">
+            UPDATE room SET room_type = 'REGULAR' WHERE id = 1;
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-50-change-column-room-type-foreign-key" author="Aleksandr-Trofimov">
+        <sql dbms="postgresql">
+            ALTER TABLE room ALTER COLUMN room_type SET NOT NULL,
+                ADD CONSTRAINT fk_room_type FOREIGN KEY (room_type) REFERENCES room_type(type_name)
+                ON DELETE NO ACTION ON UPDATE CASCADE;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

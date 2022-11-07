@@ -9,6 +9,7 @@ dist/
 
 # Compiled Java class files
 *.class
+build/
 
 # Compiled Python bytecode
 *.py[cod]
@@ -22,6 +23,9 @@ dist/
 # Maven
 target/
 dist/
+
+# Gradle
+.gradle
 
 # JetBrains IDE
 .idea/
@@ -47,4 +51,7 @@ Thumbs.db
 *.flv
 *.mov
 *.wmv
+
+# Postgresql
+postgres-data/
 

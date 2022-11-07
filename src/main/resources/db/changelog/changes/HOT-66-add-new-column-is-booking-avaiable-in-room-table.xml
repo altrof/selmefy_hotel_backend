@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet id="HOT-66-add-new-column-is-booking-available-in-room-table" author="Aleksandr-Trofimov">
+        <sql dbms="postgresql">
+            ALTER TABLE room ADD COLUMN room_available_for_booking BOOLEAN DEFAULT TRUE;
+
+            CREATE TABLE room_available_status_history (
+                id SERIAL PRIMARY KEY NOT NULL,
+                room_id BIGSERIAL NOT NULL,
+                room_available_for_booking BOOLEAN NOT NULL,
+                created_dtime TIMESTAMP NOT NULL,
+                CONSTRAINT fk_room_id FOREIGN KEY (room_id) REFERENCES room (id) ON DELETE NO ACTION ON UPDATE CASCADE
+            );
+        </sql>
+    </changeSet>
+
+
+
+</databaseChangeLog>

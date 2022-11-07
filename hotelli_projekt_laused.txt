@@ -1,0 +1,71 @@
+Võtmefunktsionaalsused:
+ - Külastaja saab teha broneeringuid, seda nii anonüümselt kui registreeritud kasutajana.
+ - Külastaja saab vaadata erinevaid tubade tüüpe ja sellega seotud infot.
+ - Külastaja saab vaadata kas konkreetset tüüpi tuba on valitud ajaperioodil saadaval või mitte.
+ - Külastaja saab vaadata muid teenuseid, mida hotell pakub, seal hulgas näiteks hotelli restorani menüü.
+ - Külastaja saab registreerida oma kasutaja.
+ - Kasutaja on kas kliendi või töötaja kasutaja.
+ - Kliendi kasutajal on vaade tehtud broneeringutele ja võimalikele sooduspakkumistele.
+ - Töötaja kasutajal on vaade hotelli üldinfo kohta, näiteks mitu broneeringut on tehtud ja konkreetselt iga broneeringu kohta.
+ - Broneeringu tehes saadetakse e-mail teavitus.
+ - Tehes broneeringu, mis on pikem kui 4 päeva, saab soodustuse.
+
+Andmebaasi/backend olemid:
+ - Tuba
+  - Toal on tüüp, näiteks sviit, tavaline, lastetuba
+  - Toal on hind
+  - Toal on suurus
+  - Toal on voodid (voodite arv ja tüüp)
+  - Toal on korrus
+  - Toal on number, mis on unikaalne selle korruse ulatuses.
+
+- Hotell
+  - Hotellil on nimi
+  - Hotellil on korrused
+
+- Isik
+    - Isikul on ees- ja perekonnanimi
+    - Isikul on aadress
+    - Isikul on sünnikuupäev
+    - Isikul on registreerimiskuupäev
+    - Isiku sünnikuupäev ei tohi olla hilisem kui registreerimiskuupäev
+    - Isikul võib olla kasutajakonto
+
+- Kasutajakonto
+   - Kasutajakonto on seotud isikuga.
+   - Kasutajakonto primary key on isiku id.
+   - Kasutajakonto secondary foreign key on isiku isikukood.
+   - Kasutajakontol on e-mail
+   - E-maili aadress on 254 tähte
+   - Kasutajakontol on kasutajanimi
+   - Kasutajakontol on parool
+   - Paroolil on password hash, mille pikkus on 60 tähte
+   - Kasutajakontosid on kahte tüüpi: töötaja, klient
+
+- Registreeritud klient
+   - Registreeritud kliendil on reseveeringud
+
+- Reserveering
+  - Reserveering on seotud isikuga
+  - Reserveeringul on tuba
+  - Reserveeringul on ajaperiood
+  - Reserveeringusse saab lisada kommentaarid/lisasoovid
+  - Reserveeringus saab valida, kas soovida hilisemat checkout'i
+
+- Töötaja
+  - Töötajal on	roll
+          Töötaja primary key on isiku id.
+  - Töötajal on alguskuupäev
+  - Töötajal on staatus: kas hetkel aktiivselt tööl või mitte
+  - Mitteaktiivsel töötajal on lõpukuupäev
+
+- Töötaja staatus
+  - Töötaja staatus on kas aktiivne, mitteaktiivne või puhkusel
+
+- Teenused
+  - Teenus on midagi, mida hotell pakub lisaks toale (restoran, saun, jõusaal jms)
+  - Teenusel on nimi
+  - Teenusel on hind
+  - Teenusel on toimumise aeg
+
+TODO: Teenuse tellimine

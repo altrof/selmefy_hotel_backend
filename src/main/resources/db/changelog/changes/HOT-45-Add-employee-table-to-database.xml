@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet id="HOT-45-Add-employee-table-to-database_1" author="Robert-Valdmaa">
+        <sql dbms="postgresql" splitStatements="true">
+            CREATE TABLE employee (
+            person_id BIGINT PRIMARY KEY NOT NULL,
+            person_identity_code VARCHAR(255) NOT NULL,
+            employee_start_date DATE NOT NULL,
+            employee_end_date DATE,
+            employee_role SMALLINT NOT NULL,
+            employee_status SMALLINT NOT NULL,
+            CONSTRAINT fk_person_id FOREIGN KEY (person_id) REFERENCES person (id) ON DELETE NO ACTION ON UPDATE CASCADE,
+            CONSTRAINT fk_person_identity_code FOREIGN KEY (person_identity_code) REFERENCES person (identity_code) ON DELETE NO ACTION ON UPDATE CASCADE,
+            CONSTRAINT fk_employee_role FOREIGN KEY (employee_role) REFERENCES employee_role (id) ON DELETE NO ACTION ON UPDATE CASCADE,
+            CONSTRAINT fk_employee_status FOREIGN KEY (employee_status) REFERENCES employee_status (id) ON DELETE NO ACTION ON UPDATE CASCADE
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-45-Add-employee-table-to-database_2" author="Robert-Valdmaa">
+        <sql dbms="postgresql" splitStatements="true">
+            INSERT INTO employee
+            (person_id, person_identity_code, employee_start_date, employee_role, employee_status)
+            SELECT person.id, person.identity_code, '2010-11-03', employee_role.id, employee_status.id
+            FROM person, employee_role, employee_status
+            WHERE person.identity_code='37507312222' AND employee_role.role_name='Housekeeping' AND employee_status.status_name='Working'
+            ;
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-45-Add-employee-table-to-database_3" author="Robert-Valdmaa">
+        <sql dbms="postgresql" splitStatements="true">
+            INSERT INTO employee
+            (person_id, person_identity_code, employee_start_date, employee_role, employee_status)
+            SELECT person.id, person.identity_code, '2015-06-04', employee_role.id, employee_status.id
+            FROM person, employee_role, employee_status
+            WHERE person.identity_code='38610211234' AND employee_role.role_name='Administrator' AND employee_status.status_name='Working'
+            ;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
