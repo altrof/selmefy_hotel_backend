@@ -20,4 +20,8 @@ public class HotelServiceService {
                 .map(HotelServiceMapper.INSTANCE::toDTO)
                 .toList();
     }
+
+    public HotelServiceDTO getHotelServiceById(short id) {
+        return hotelServiceRepository.findById(id).map(HotelServiceMapper.INSTANCE::toDTO).orElseThrow();
+    }
 }
