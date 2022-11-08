@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet id="HOT-77-Add-table-person-in-service-order-to-database_1" author="Rivo">
+        <sql dbms="postgresql">
+            CREATE TABLE person_in_service_order(
+                service_id BIGINT NOT NULL,
+                person_id BIGINT NOT NULL,
+                person_identity_code VARCHAR(255) NOT NULL,
+                CONSTRAINT pk_person_in_service_order PRIMARY KEY (service_id, person_id),
+                CONSTRAINT fk_service_id FOREIGN KEY (service_id) REFERENCES hotel_service_order (id) ON DELETE NO ACTION ON UPDATE CASCADE,
+                CONSTRAINT fk_person_id FOREIGN KEY (person_id) REFERENCES person (id) ON DELETE NO ACTION ON UPDATE CASCADE,
+                CONSTRAINT fk_person_identity_code FOREIGN KEY (person_identity_code)
+                REFERENCES person (identity_code) ON DELETE NO ACTION ON UPDATE CASCADE
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-77-Add-table-person-in-service-order-to-database_2" author="Rivo">
+        <sql dbms="postgresql">
+            INSERT INTO person_in_service_order (service_id, person_id , person_identity_code)
+            SELECT 1, person.id, person.identity_code FROM person WHERE person.identity_code='49601111234';
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-77-Add-table-person-in-service-order-to-database_3" author="Rivo">
+        <sql dbms="postgresql">
+            INSERT INTO person_in_service_order (service_id, person_id , person_identity_code)
+            SELECT 2, person.id, person.identity_code FROM person WHERE person.identity_code='38610211234';
+        </sql>
+    </changeSet>
+</databaseChangeLog>
