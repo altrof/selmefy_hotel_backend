@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HotelServiceOrderDTO {
-    private short serviceType;
+    private Short serviceType;
     private String personId;
     private LocalDate orderTime;
     private Long price;

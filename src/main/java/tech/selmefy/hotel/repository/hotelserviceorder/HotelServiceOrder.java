@@ -21,7 +21,7 @@ public class HotelServiceOrder {
     private Long id;
 
     @Column(nullable = false, insertable = false, updatable = false)
-    private short serviceType;
+    private Short serviceType;
 
     @Column(nullable = false, insertable = false, updatable = false)
     private String personId;
