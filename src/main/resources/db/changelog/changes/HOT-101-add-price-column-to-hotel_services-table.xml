@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet id="HOT-101-add-price-column-to-hotel_services-table-1" author="Norman">
+        <sql dbms="postgresql">
+            ALTER TABLE hotel_service
+            ADD COLUMN price NUMERIC(2);
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-101-add-price-column-to-hotel_services-table-2" author="Norman">
+        <sql dbms="postgresql">
+            UPDATE hotel_service
+            SET price=10.00 WHERE hotel_service_name='PARKING';
+
+            UPDATE hotel_service
+            SET price=15.00 WHERE hotel_service_name='BOTTLE_OF_CHAMPAGNE';
+
+            UPDATE hotel_service
+            SET price=9.95 WHERE hotel_service_name='FLOWERS';
+
+            UPDATE hotel_service
+            SET price=5.00 WHERE hotel_service_name='SHUTTLE';
+
+            UPDATE hotel_service
+            SET price=25.00 WHERE hotel_service_name='RESTAURANT';
+
+            UPDATE hotel_service
+            SET price=50.00 WHERE hotel_service_name='MASSAGE';
+
+            UPDATE hotel_service
+            SET price=10.00 WHERE hotel_service_name='LATE_CHECK_OUT';
+
+            UPDATE hotel_service
+            SET price=5.00 WHERE hotel_service_name='ALARM_CLOCK';
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-101-add-price-column-to-hotel_services-table-3" author="Norman">
+        <sql dbms="postgresql">
+            ALTER TABLE hotel_service
+            ALTER COLUMN price SET NOT NULL;
+        </sql>
+    </changeSet>
+</databaseChangeLog>
