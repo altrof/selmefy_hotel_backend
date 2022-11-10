@@ -2,10 +2,8 @@ package tech.selmefy.hotel.service.booking;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tech.selmefy.hotel.controller.booking.dto.BookingDTO;
-import tech.selmefy.hotel.controller.person.dto.PersonDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.mapper.BookingMapper;
 import tech.selmefy.hotel.repository.booking.Booking;
@@ -14,8 +12,6 @@ import tech.selmefy.hotel.repository.person.Person;
 import tech.selmefy.hotel.repository.person.PersonRepository;
 import tech.selmefy.hotel.repository.room.Room;
 import tech.selmefy.hotel.repository.room.RoomRepository;
-
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,13 +71,14 @@ public class BookingService {
         } else {
             List<Booking> bookings = bookingRepository.findAll();
             for (Booking booking : bookings) {
-                if (Objects.equals(booking.getRoomId(), room.getId())) {
-                    if (fromDate.isBefore(booking.getCheckInDate())
-                            && toDate.isAfter(booking.getCheckInDate())) {
-                        return false;
-                    } else if (fromDate.isBefore(booking.getCheckOutDate())) {
-                        return false;
-                    }
+                if (
+                    (Objects.equals(booking.getRoomId(), room.getId()))
+                    &&
+                        (fromDate.isBefore(booking.getCheckInDate())
+                        && toDate.isAfter(booking.getCheckInDate()))
+                        ||
+                        (fromDate.isBefore(booking.getCheckOutDate()))) {
+                    return false;
                 }
             }
         }
