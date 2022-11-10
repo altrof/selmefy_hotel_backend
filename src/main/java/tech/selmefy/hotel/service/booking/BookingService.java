@@ -38,8 +38,6 @@ public class BookingService {
             return bookingDTOList;
         }
 
-        // Vt siit edasi https://stackoverflow.com/questions/73345078/spring-boot-json-how-to-add-foreign-key-when-using-post-request
-
     public void createNewBooking(@NonNull BookingDTO bookingDTO, Long roomId, Long personId) {
         // Validation needed.
             Room room = roomRepository.findById(roomId).get();

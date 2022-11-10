@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import tech.selmefy.hotel.controller.booking.dto.BookingDTO;
 import tech.selmefy.hotel.repository.booking.Booking;
@@ -26,8 +27,10 @@ public class BookingController {
         return bookingService.getAllBookings();
     }
 
-    @PostMapping
-    public void createNewBooking(@RequestBody BookingDTO bookingDTO) {
-        bookingService.createNewBooking(bookingDTO, 1L, 1L);
+    @PostMapping(params = {"roomId", "personId"})
+    public void createNewBooking(@RequestBody BookingDTO bookingDTO,
+                                 @RequestParam(name="roomId") Long roomId,
+                                 @RequestParam(name = "personId") Long personId) {
+        bookingService.createNewBooking(bookingDTO, roomId, personId);
     }
 }
