@@ -32,6 +32,6 @@ public class HotelServiceOrder {
     @Column(nullable = false)
     private Long price;
 
-    @Column(nullable = false)
+    @Column(length = 1000)
     private String comments;
 }
