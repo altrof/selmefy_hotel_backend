@@ -3,6 +3,7 @@ package tech.selmefy.hotel.controller.hotelserviceorder;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tech.selmefy.hotel.controller.hotelserviceorder.dto.HotelServiceOrderDTO;
@@ -21,4 +22,10 @@ public class HotelServiceOrderController {
     public List<HotelServiceOrderDTO> getAllgetAllHotelServiceOrders() {
         return hotelServiceOrderService.getAllHotelServiceOrders();
     }
+
+    @GetMapping("/{serviceOrderId}")
+    public  HotelServiceOrderDTO getHotelServiceOrderById(@PathVariable Long serviceOrderId) {
+        return hotelServiceOrderService.getHotelServiceOrderById(serviceOrderId);
+    }
+
 }
