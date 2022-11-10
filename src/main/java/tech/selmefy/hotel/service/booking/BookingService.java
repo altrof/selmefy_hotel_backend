@@ -38,10 +38,16 @@ public class BookingService {
             return bookingDTOList;
         }
 
-    public void createNewBooking(@NonNull BookingDTO bookingDTO, Long roomId, Long personId) {
+    public void createNewBooking(@NonNull BookingDTO bookingDTO, Long roomId, String personIdentityCode) {
         // Validation needed.
-            Room room = roomRepository.findById(roomId).get();
-            Person person = personRepository.findById(personId).get();
+            Room room = roomRepository.findById(roomId).orElseThrow();
+
+            /*
+                We find the person based on their identity code as opposed
+                to the internal id in the DB. This allows to connect the person
+                to a booking without having to check their id from the DB.
+             */
+            Person person = personRepository.findPersonByIdentityCode(personIdentityCode).orElseThrow();
             Booking booking = BookingMapper.INSTANCE.toEntity(bookingDTO);
             booking.setRoom(room);
             booking.setPerson(person);

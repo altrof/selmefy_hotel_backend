@@ -30,7 +30,7 @@ public class BookingController {
     @PostMapping(params = {"roomId", "personId"})
     public void createNewBooking(@RequestBody BookingDTO bookingDTO,
                                  @RequestParam(name="roomId") Long roomId,
-                                 @RequestParam(name = "personId") Long personId) {
+                                 @RequestParam(name = "personId") String personId) {
         bookingService.createNewBooking(bookingDTO, roomId, personId);
     }
 }
