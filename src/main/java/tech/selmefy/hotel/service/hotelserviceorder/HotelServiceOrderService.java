@@ -25,4 +25,9 @@ public class HotelServiceOrderService {
         }
         return hotelServiceOrderDTOList;
     }
+
+    public  HotelServiceOrderDTO getHotelServiceOrderById(Long id) {
+        return  hotelServiceOrderRepository.findById(id).map(HotelServiceOrderMapper.INSTANCE::toDTO).orElseThrow();
+    }
+
 }
