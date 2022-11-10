@@ -45,4 +45,8 @@ public class PersonService {
         Person person = PersonMapper.INSTANCE.toEntity(personDTO);
         personRepository.save(person);
     }
+
+    public PersonDTO getPersonById(Long id) {
+        return personRepository.findById(id).map(PersonMapper.INSTANCE::toDTO).orElseThrow();
+    }
 }
