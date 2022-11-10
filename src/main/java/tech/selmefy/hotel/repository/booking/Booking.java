@@ -46,7 +46,6 @@ public class Booking {
     @Column(nullable = false, insertable = false, updatable = false)
     private String personIdentityCode;
 
-
     @Column(nullable = false)
     private int price;
 

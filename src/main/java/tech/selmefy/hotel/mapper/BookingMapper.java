@@ -9,4 +9,6 @@ import tech.selmefy.hotel.repository.booking.Booking;
 public interface BookingMapper {
     BookingMapper INSTANCE = Mappers.getMapper(BookingMapper.class);
     BookingDTO toDTO(Booking booking);
+
+    Booking toEntity(BookingDTO bookingDTO);
 }
