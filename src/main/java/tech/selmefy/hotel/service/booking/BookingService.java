@@ -84,4 +84,8 @@ public class BookingService {
         }
         return true;
     }
+
+    public BookingDTO getBookingById(Long id) {
+        return bookingRepository.findById(id).map(BookingMapper.INSTANCE::toDTO).orElseThrow();
+    }
 }
