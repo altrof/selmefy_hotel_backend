@@ -1,5 +1,6 @@
 package tech.selmefy.hotel.service.booking;
 
+import com.sun.source.tree.OpensTree;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
@@ -13,9 +14,7 @@ import tech.selmefy.hotel.repository.person.PersonRepository;
 import tech.selmefy.hotel.repository.room.Room;
 import tech.selmefy.hotel.repository.room.RoomRepository;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -64,12 +63,22 @@ public class BookingService {
         booking.setPerson(person);
         bookingRepository.save(booking);
     }
-
     private boolean isRoomAvailable(Room room, LocalDate fromDate, LocalDate toDate) {
+        /*
+        If someone wants to change their check in date then we need to remove their booking
+        from the list otherwise we will get "Room is not available" error.
+         */
+        return isRoomAvailable(room, fromDate, toDate, Optional.empty());
+    }
+    private boolean isRoomAvailable(Room room, LocalDate fromDate, LocalDate toDate, Optional<Booking> bookingUpdate) {
         if (room.getRoomAvailableForBooking().equals(Boolean.FALSE)) {
             return false;
         } else {
             List<Booking> bookings = bookingRepository.findAll();
+            try {
+                bookings.remove(bookingUpdate.orElseThrow());
+            } catch (NoSuchElementException ignored) {
+            }
             for (Booking booking : bookings) {
                 if (
                     (Objects.equals(booking.getRoomId(), room.getId()))
@@ -105,7 +114,7 @@ public class BookingService {
         Room room = roomRepository.findById(bookingDTO.getRoomId()).orElseThrow();
         Person person = personRepository.findPersonByIdentityCode(bookingDTO.getPersonIdentityCode()).orElseThrow();
 
-        if (!isRoomAvailable(room, bookingDTO.getCheckInDate(), bookingDTO.getCheckOutDate())) {
+        if (!isRoomAvailable(room, bookingDTO.getCheckInDate(), bookingDTO.getCheckOutDate(), Optional.of(booking))) {
             throw new ApiRequestException("Room is not available at the provided dates!");
         }
 
@@ -120,7 +129,7 @@ public class BookingService {
         booking.setRoomId(bookingDTO.getRoomId());
         booking.setRoom(room);
 
-
+        bookingRepository.save(booking);
         return BookingMapper.INSTANCE.toDTO(booking);
     }
 }
