@@ -88,4 +88,39 @@ public class BookingService {
     public BookingDTO getBookingById(Long id) {
         return bookingRepository.findById(id).map(BookingMapper.INSTANCE::toDTO).orElseThrow();
     }
+
+    public BookingDTO updateBooking(Long id, @NonNull BookingDTO bookingDTO) {
+        Booking booking = bookingRepository.findById(id).orElseThrow(
+                () -> new ApiRequestException("Booking does not exist with id: " + id));
+
+        if (bookingDTO.getCheckInDate().isAfter(bookingDTO.getCheckOutDate())
+                || bookingDTO.getCheckInDate().isEqual(bookingDTO.getCheckOutDate())) {
+            throw new ApiRequestException("Check-out has to be after check-in!");
+        }
+
+        if (bookingDTO.getCheckInDate().isBefore(LocalDate.now())) {
+            throw new ApiRequestException("Check-in cannot be in the past!");
+        }
+
+        Room room = roomRepository.findById(bookingDTO.getRoomId()).orElseThrow();
+        Person person = personRepository.findPersonByIdentityCode(bookingDTO.getPersonIdentityCode()).orElseThrow();
+
+        if (!isRoomAvailable(room, bookingDTO.getCheckInDate(), bookingDTO.getCheckOutDate())) {
+            throw new ApiRequestException("Room is not available at the provided dates!");
+        }
+
+        booking.setCheckInDate(bookingDTO.getCheckInDate());
+        booking.setCheckOutDate(bookingDTO.getCheckOutDate());
+        booking.setPrice(bookingDTO.getPrice());
+        booking.setComments(bookingDTO.getComments());
+
+        booking.setPerson(person);
+        booking.setPersonIdentityCode(bookingDTO.getPersonIdentityCode());
+
+        booking.setRoomId(bookingDTO.getRoomId());
+        booking.setRoom(room);
+
+
+        return BookingMapper.INSTANCE.toDTO(booking);
+    }
 }
