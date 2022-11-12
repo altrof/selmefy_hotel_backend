@@ -1,6 +1,5 @@
 package tech.selmefy.hotel.service.booking;
 
-import com.sun.source.tree.OpensTree;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,10 @@ import tech.selmefy.hotel.repository.person.PersonRepository;
 import tech.selmefy.hotel.repository.room.Room;
 import tech.selmefy.hotel.repository.room.RoomRepository;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -75,10 +77,7 @@ public class BookingService {
             return false;
         } else {
             List<Booking> bookings = bookingRepository.findAll();
-            try {
-                bookings.remove(bookingUpdate.orElseThrow());
-            } catch (NoSuchElementException ignored) {
-            }
+            bookingUpdate.ifPresent(bookings::remove);
             for (Booking booking : bookings) {
                 if (
                     (Objects.equals(booking.getRoomId(), room.getId()))
