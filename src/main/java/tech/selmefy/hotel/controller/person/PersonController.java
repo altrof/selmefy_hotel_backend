@@ -2,7 +2,9 @@ package tech.selmefy.hotel.controller.person;
 
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tech.selmefy.hotel.controller.booking.dto.BookingDTO;
 import tech.selmefy.hotel.controller.person.dto.PersonDTO;
 import tech.selmefy.hotel.service.person.PersonService;
 
@@ -28,5 +30,10 @@ public class PersonController {
     @PostMapping
     public void createNewPerson(@RequestBody PersonDTO personDTO) {
         personService.createNewPerson(personDTO);
+    }
+
+    @PutMapping("/{personId}")
+    public ResponseEntity<PersonDTO> updateBooking(@PathVariable Long personId, @RequestBody PersonDTO personDTO) {
+        return ResponseEntity.ok(personService.updatePerson(personId, personDTO));
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import tech.selmefy.hotel.controller.person.dto.PersonDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.mapper.PersonMapper;
+import tech.selmefy.hotel.repository.booking.Booking;
 import tech.selmefy.hotel.repository.person.Person;
 import tech.selmefy.hotel.repository.person.PersonRepository;
 import org.springframework.lang.NonNull;
@@ -48,5 +49,31 @@ public class PersonService {
 
     public PersonDTO getPersonById(Long id) {
         return personRepository.findById(id).map(PersonMapper.INSTANCE::toDTO).orElseThrow();
+    }
+
+    public PersonDTO updatePerson(Long personId, PersonDTO personDTO) {
+        Person person = personRepository.findById(personId).orElseThrow(
+                () -> new ApiRequestException("Booking does not exist with id: " + personId));
+
+        if(isNullOrEmpty(personDTO.getFirstName()) || isNullOrEmpty(personDTO.getLastName())) {
+            throw new ApiRequestException("Firstname or lastname can not to be null.");
+        }
+
+        if(Boolean.TRUE.equals(isNullOrEmpty(personDTO.getIdentityCode()))) {
+            throw new ApiRequestException("Identity code is required in request body.");
+        }
+
+        if(Boolean.TRUE.equals(isNullOrEmpty(personDTO.getDateOfBirth()))) {
+            throw new ApiRequestException("Birthday date should be present.");
+        }
+
+        person.setDateOfBirth(personDTO.getDateOfBirth());
+        person.setLastName(personDTO.getLastName());
+        person.setFirstName(personDTO.getFirstName());
+        person.setIdentityCode(personDTO.getIdentityCode());
+
+        personRepository.save(person);
+
+        return PersonMapper.INSTANCE.toDTO(person);
     }
 }
