@@ -2,9 +2,11 @@ package tech.selmefy.hotel.controller.booking;
 
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,5 +39,10 @@ public class BookingController {
                                  @RequestParam(name="roomId") Long roomId,
                                  @RequestParam(name = "personId") String personId) {
         bookingService.createNewBooking(bookingDTO, roomId, personId);
+    }
+
+    @PutMapping("/{bookingId}")
+    public ResponseEntity<BookingDTO> updateBooking(@PathVariable Long bookingId, @RequestBody BookingDTO bookingDTO) {
+        return ResponseEntity.ok(bookingService.updateBooking(bookingId, bookingDTO));
     }
 }
