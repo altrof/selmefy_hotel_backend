@@ -23,11 +23,11 @@ public class HotelServiceOrder {
     @Column(nullable = false)
     private Short serviceType;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private String personId;
 
     @Column(nullable = false)
-    private Timestamp orderTime = new Timestamp(System.currentTimeMillis());
+    private Timestamp orderTime;
 
     @Column(nullable = false)
     private Long price;
