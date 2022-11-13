@@ -20,6 +20,11 @@ public class PersonController {
         return personService.getAllPeople();
     }
 
+    @GetMapping("/{personId}")
+    public PersonDTO getPersonById(@PathVariable Long personId) {
+        return personService.getPersonById(personId);
+    }
+
     @PostMapping
     public void createNewPerson(@RequestBody PersonDTO personDTO) {
         personService.createNewPerson(personDTO);

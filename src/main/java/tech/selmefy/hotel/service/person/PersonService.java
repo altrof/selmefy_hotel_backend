@@ -34,15 +34,19 @@ public class PersonService {
             throw new ApiRequestException("Firstname or lastname can not to be null.");
         }
 
-        if(isNullOrEmpty(personDTO.getIdentityCode())) {
+        if(Boolean.TRUE.equals(isNullOrEmpty(personDTO.getIdentityCode()))) {
             throw new ApiRequestException("Identity code is required in request body.");
         }
 
-        if(isNullOrEmpty(personDTO.getDateOfBirth())) {
+        if(Boolean.TRUE.equals(isNullOrEmpty(personDTO.getDateOfBirth()))) {
             throw new ApiRequestException("Birthday date should be present.");
         }
 
         Person person = PersonMapper.INSTANCE.toEntity(personDTO);
         personRepository.save(person);
+    }
+
+    public PersonDTO getPersonById(Long id) {
+        return personRepository.findById(id).map(PersonMapper.INSTANCE::toDTO).orElseThrow();
     }
 }
