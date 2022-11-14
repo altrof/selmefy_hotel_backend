@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import tech.selmefy.hotel.controller.person.dto.PersonDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.mapper.PersonMapper;
-import tech.selmefy.hotel.repository.booking.Booking;
 import tech.selmefy.hotel.repository.person.Person;
 import tech.selmefy.hotel.repository.person.PersonRepository;
 import org.springframework.lang.NonNull;
