@@ -14,18 +14,23 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.io.Serializable;
 
+/** The primary key of this entity is composite.
+* See https://www.baeldung.com/jpa-composite-primary-keys
+* for implemention details.
+ */
 @Entity(name = "person_in_booking")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@IdClass(PersonInBookingId.class)
 public class PersonInBooking {
 
-// composite id https://www.baeldung.com/jpa-composite-primary-keys
-//    CONSTRAINT pk_person_in_booking PRIMARY KEY (booking_id, person_id),
     @ManyToOne
     @JoinColumn(name = "bookingId", referencedColumnName = "id")
     private Booking booking;
@@ -35,9 +40,11 @@ public class PersonInBooking {
     @JoinColumn(name = "personIdentityCode", referencedColumnName = "identityCode")
     private Person person;
 
+    @Id
     @Column(nullable = false, insertable = false, updatable = false)
     private Long bookingId;
 
+    @Id
     @Column(nullable = false, insertable = false, updatable = false)
     private Long personId;
 
