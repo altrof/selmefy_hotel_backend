@@ -10,9 +10,12 @@ import tech.selmefy.hotel.repository.booking.Booking;
 import tech.selmefy.hotel.repository.booking.BookingRepository;
 import tech.selmefy.hotel.repository.person.Person;
 import tech.selmefy.hotel.repository.person.PersonRepository;
+import tech.selmefy.hotel.repository.personinbooking.PersonInBooking;
 import tech.selmefy.hotel.repository.personinbooking.PersonInBookingRepository;
 import tech.selmefy.hotel.repository.room.Room;
 import tech.selmefy.hotel.repository.room.RoomRepository;
+
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +44,7 @@ public class BookingService {
         return bookingDTOList;
     }
 
-    private void addPersonToBooking() {
-    }
-
+    @Transactional
     public void createNewBooking(@NonNull BookingDTO bookingDTO, Long roomId,
         String ownerIdentityCode, List<String> otherGuestsIdentityCodes) {
 
@@ -68,12 +69,19 @@ public class BookingService {
             to the internal id in the DB. This allows to connect the person
             to a booking without having to check their id from the DB.
         */
-        Person person = personRepository.findPersonByIdentityCode(ownerIdentityCode)
+        Person bookingOwner = personRepository.findPersonByIdentityCode(ownerIdentityCode)
             .orElseThrow(() -> new ApiRequestException("No such person!"));
+        List<Person> otherPeople = otherGuestsIdentityCodes.stream()
+            .map(idCode -> personRepository.findPersonByIdentityCode(idCode).orElseThrow()).toList();
         Booking booking = BookingMapper.INSTANCE.toEntity(bookingDTO);
         booking.setRoom(room);
-        booking.setPerson(person);
+        booking.setPerson(bookingOwner);
         bookingRepository.save(booking);
+        addPersonInBooking(booking, bookingOwner);
+
+        for (Person person : otherPeople) {
+            addPersonInBooking(booking, person);
+        }
     }
     private boolean isRoomAvailable(Room room, LocalDate fromDate, LocalDate toDate) {
         /*
@@ -81,6 +89,11 @@ public class BookingService {
         from the list otherwise we will get "Room is not available" error.
          */
         return isRoomAvailable(room, fromDate, toDate, Optional.empty());
+    }
+
+    private void addPersonInBooking(Booking booking, Person person) {
+        personInBookingRepository.addPersonInBooking(booking.getId(),
+            person.getId(), person.getIdentityCode());
     }
     private boolean isRoomAvailable(Room room, LocalDate fromDate, LocalDate toDate, Optional<Booking> bookingUpdate) {
         if (room.getRoomAvailableForBooking().equals(Boolean.FALSE)) {

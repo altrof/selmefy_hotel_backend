@@ -31,6 +31,15 @@ import java.io.Serializable;
 @IdClass(PersonInBookingId.class)
 public class PersonInBooking {
 
+/*
+    public PersonInBooking(Booking booking, Person person) {
+        this.booking = booking;
+        this.person = person;
+        this.bookingId = booking.getId();
+        this.personId = person.getId();
+        this.personIdentityCode = person.getIdentityCode();
+    }*/
+
     @ManyToOne
     @JoinColumn(name = "bookingId", referencedColumnName = "id")
     private Booking booking;
