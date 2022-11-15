@@ -1,8 +1,10 @@
 package tech.selmefy.hotel.service.hotelserviceorder;
 
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.stereotype.Service;
 import tech.selmefy.hotel.controller.hotelserviceorder.dto.HotelServiceOrderDTO;
+import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.mapper.HotelServiceOrderMapper;
 import tech.selmefy.hotel.repository.hotelserviceorder.HotelServiceOrder;
 import tech.selmefy.hotel.repository.hotelserviceorder.HotelServiceOrderRepository;
@@ -30,4 +32,15 @@ public class HotelServiceOrderService {
         return  hotelServiceOrderRepository.findById(id).map(HotelServiceOrderMapper.INSTANCE::toDTO).orElseThrow();
     }
 
+    public void createNewHotelServiceOrder(@NonNull HotelServiceOrderDTO hotelServiceOrderDTO) {
+        if (hotelServiceOrderDTO.getPrice() < 0) {
+            throw new ApiRequestException("Price can't be negative!");
+        }
+
+        if (hotelServiceOrderDTO.getComments().length() > 1000) {
+            throw new ApiRequestException("Comment length too long, keep it under 1000 characters");
+        }
+        HotelServiceOrder hotelServiceOrder = HotelServiceOrderMapper.INSTANCE.toEntity(hotelServiceOrderDTO);
+        hotelServiceOrderRepository.save(hotelServiceOrder);
+    }
 }

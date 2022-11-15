@@ -9,4 +9,5 @@ import tech.selmefy.hotel.repository.hotelserviceorder.HotelServiceOrder;
 public interface HotelServiceOrderMapper {
     HotelServiceOrderMapper INSTANCE = Mappers.getMapper(HotelServiceOrderMapper.class);
     HotelServiceOrderDTO toDTO(HotelServiceOrder hotelServiceOrder);
+    HotelServiceOrder toEntity(HotelServiceOrderDTO hotelServiceOrderDTO);
 }
