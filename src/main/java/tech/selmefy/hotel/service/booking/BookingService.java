@@ -10,7 +10,6 @@ import tech.selmefy.hotel.repository.booking.Booking;
 import tech.selmefy.hotel.repository.booking.BookingRepository;
 import tech.selmefy.hotel.repository.person.Person;
 import tech.selmefy.hotel.repository.person.PersonRepository;
-import tech.selmefy.hotel.repository.personinbooking.PersonInBooking;
 import tech.selmefy.hotel.repository.personinbooking.PersonInBookingRepository;
 import tech.selmefy.hotel.repository.room.Room;
 import tech.selmefy.hotel.repository.room.RoomRepository;
@@ -44,35 +43,30 @@ public class BookingService {
         return bookingDTOList;
     }
 
+    /**
+     * Creates a new booking based on the BookingDTO and adds all connected people
+     * to the person_in_booking table. People that are added need to have been registered
+     * in the Person table of the database. If they are not, use PersonService.createNewPerson() first.
+     * @param bookingDTO data about the Booking as described in BookingDTO class
+     * @param roomId id of the room that is booked.
+     * @param ownerIdentityCode personal identity code of the person for whom the room is booked.
+     * @param otherGuestsIdentityCodes personal identity codes of all other people
+     * that are connected with the booking.
+     */
     @Transactional
     public void createNewBooking(@NonNull BookingDTO bookingDTO, Long roomId,
         String ownerIdentityCode, List<String> otherGuestsIdentityCodes) {
 
-        if (bookingDTO.getCheckInDate().isAfter(bookingDTO.getCheckOutDate())
-                || bookingDTO.getCheckInDate().isEqual(bookingDTO.getCheckOutDate())) {
-            throw new ApiRequestException("Check-out has to be after check-in!");
-        }
-
-        if (bookingDTO.getCheckInDate().isBefore(LocalDate.now())) {
-            throw new ApiRequestException("Check-in cannot be in the past!");
-        }
-
         Room room = roomRepository.findById(roomId)
-            .orElseThrow(() -> new ApiRequestException("No such room!"));
+                .orElseThrow(() -> new ApiRequestException("No such room!"));
 
-        if (!isRoomAvailable(room, bookingDTO.getCheckInDate(), bookingDTO.getCheckOutDate())) {
-            throw new ApiRequestException("Room is not available at the provided dates!");
-        }
+        validateBookingRequest(bookingDTO, room, Optional.empty());
 
-        /*
-            We find the person based on their identity code as opposed
-            to the internal id in the DB. This allows to connect the person
-            to a booking without having to check their id from the DB.
-        */
         Person bookingOwner = personRepository.findPersonByIdentityCode(ownerIdentityCode)
-            .orElseThrow(() -> new ApiRequestException("No such person!"));
+            .orElseThrow(() -> new ApiRequestException("Owner of the booking is not in the database!"));
         List<Person> otherPeople = otherGuestsIdentityCodes.stream()
-            .map(idCode -> personRepository.findPersonByIdentityCode(idCode).orElseThrow()).toList();
+            .map(idCode -> personRepository.findPersonByIdentityCode(idCode).orElseThrow(
+                    () -> new ApiRequestException("Additional guest is not in the database: " + idCode))).toList();
         Booking booking = BookingMapper.INSTANCE.toEntity(bookingDTO);
         booking.setRoom(room);
         booking.setPerson(bookingOwner);
@@ -83,12 +77,33 @@ public class BookingService {
             addPersonInBooking(booking, person);
         }
     }
-    private boolean isRoomAvailable(Room room, LocalDate fromDate, LocalDate toDate) {
-        /*
-        If someone wants to change their check in date then we need to remove their booking
-        from the list otherwise we will get "Room is not available" error.
-         */
-        return isRoomAvailable(room, fromDate, toDate, Optional.empty());
+
+    /*
+    If someone wants to change their check in date then we need to remove their booking
+    from the list otherwise we will get "Room is not available" error.
+     */
+
+    /**
+     * Check whether the data in the bookingDTO is valid
+     * and whether the room is available at the period in question.
+     * @param bookingDTO Data of the new booking.
+     * @param room Room that is being booked.
+     * @param originalBooking In case of a POST request, this is empty. In case of PUT
+     * @throws ApiRequestException
+     */
+    private void validateBookingRequest(BookingDTO bookingDTO, Room room, Optional<Booking> originalBooking) throws ApiRequestException {
+        if (bookingDTO.getCheckInDate().isAfter(bookingDTO.getCheckOutDate())
+                || bookingDTO.getCheckInDate().isEqual(bookingDTO.getCheckOutDate())) {
+            throw new ApiRequestException("Check-out has to be after check-in!");
+        }
+
+        if (bookingDTO.getCheckInDate().isBefore(LocalDate.now())) {
+            throw new ApiRequestException("Check-in cannot be in the past!");
+        }
+
+        if (!isRoomAvailable(room, bookingDTO.getCheckInDate(), bookingDTO.getCheckOutDate(), originalBooking)) {
+            throw new ApiRequestException("Room is not available at the provided dates!");
+        }
     }
 
     private void addPersonInBooking(Booking booking, Person person) {
@@ -124,21 +139,13 @@ public class BookingService {
         Booking booking = bookingRepository.findById(id).orElseThrow(
                 () -> new ApiRequestException("Booking does not exist with id: " + id));
 
-        if (bookingDTO.getCheckInDate().isAfter(bookingDTO.getCheckOutDate())
-                || bookingDTO.getCheckInDate().isEqual(bookingDTO.getCheckOutDate())) {
-            throw new ApiRequestException("Check-out has to be after check-in!");
-        }
+        Room room = roomRepository.findById(bookingDTO.getRoomId())
+            .orElseThrow(() -> new ApiRequestException("No such room!"));
 
-        if (bookingDTO.getCheckInDate().isBefore(LocalDate.now())) {
-            throw new ApiRequestException("Check-in cannot be in the past!");
-        }
+        validateBookingRequest(bookingDTO, room, Optional.of(booking));
 
-        Room room = roomRepository.findById(bookingDTO.getRoomId()).orElseThrow();
-        Person person = personRepository.findPersonByIdentityCode(bookingDTO.getPersonIdentityCode()).orElseThrow();
-
-        if (!isRoomAvailable(room, bookingDTO.getCheckInDate(), bookingDTO.getCheckOutDate(), Optional.of(booking))) {
-            throw new ApiRequestException("Room is not available at the provided dates!");
-        }
+        Person person = personRepository.findPersonByIdentityCode(bookingDTO.getPersonIdentityCode())
+            .orElseThrow(() -> new ApiRequestException("No such person!"));
 
         booking.setCheckInDate(bookingDTO.getCheckInDate());
         booking.setCheckOutDate(bookingDTO.getCheckOutDate());
