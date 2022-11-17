@@ -29,7 +29,7 @@ public class PersonService {
         return personDTOList;
     }
     
-    public void createNewPerson(@NonNull PersonDTO personDTO) {
+    public Long createNewPerson(@NonNull PersonDTO personDTO) {
         if(isNullOrEmpty(personDTO.getFirstName()) || isNullOrEmpty(personDTO.getLastName())) {
             throw new ApiRequestException("Firstname or lastname can not to be null.");
         }
@@ -44,9 +44,11 @@ public class PersonService {
 
         Person person = PersonMapper.INSTANCE.toEntity(personDTO);
         personRepository.save(person);
+        return person.getId();
     }
 
     public PersonDTO getPersonById(Long id) {
-        return personRepository.findById(id).map(PersonMapper.INSTANCE::toDTO).orElseThrow();
+        return personRepository.findById(id).map(PersonMapper.INSTANCE::toDTO)
+            .orElseThrow(() -> new RuntimeException("Error: No person with provided id."));
     }
 }
