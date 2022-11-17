@@ -3,6 +3,8 @@ package tech.selmefy.hotel.repository.person;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Column;
@@ -17,9 +19,9 @@ import java.time.LocalDate;
 @Entity(name = "person")
 @AllArgsConstructor
 @NoArgsConstructor
+@RequiredArgsConstructor
 @Getter
 @Setter
-
 public class Person implements Serializable {
     /*
     We need to implement Serializable for Person because non-PK column identityCode is used as foreign key elsewhere.
@@ -30,15 +32,19 @@ public class Person implements Serializable {
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private Long id;
 
+    @NonNull
     @Column(unique = true, nullable = false)
     private String identityCode;
 
+    @NonNull
     @Column(nullable = false)
     private String firstName;
 
+    @NonNull
     @Column(nullable = false)
     private String lastName;
 
+    @NonNull
     @Column(nullable = false)
     private LocalDate dateOfBirth;
 
