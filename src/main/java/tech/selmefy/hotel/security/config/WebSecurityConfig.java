@@ -62,7 +62,6 @@ public class WebSecurityConfig {
             .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests().antMatchers("/auth/**").permitAll()
-            .antMatchers("/test/**").permitAll()
             .anyRequest().authenticated();
 
         http.authenticationProvider(authenticationProvider());
@@ -76,12 +75,12 @@ public class WebSecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
-            .antMatchers("/api/auth/**")
             .antMatchers("/v2/api-docs/**")
             .antMatchers("/configuration/**")
             .antMatchers("/swagger*/**")
             .antMatchers("/webjars/**")
             .antMatchers("/swagger-ui/**")
-            .antMatchers("/docs/**");
+            .antMatchers("/docs/**")
+            .antMatchers("/**/public/**");
     }
 }

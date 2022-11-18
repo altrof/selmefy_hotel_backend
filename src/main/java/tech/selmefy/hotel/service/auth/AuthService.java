@@ -61,7 +61,7 @@ public class AuthService {
         );
     }
 
-    public ResponseEntity<?> registerUser(SignupRequestDTO signupRequest) {
+    public ResponseEntity<Object> registerUser(SignupRequestDTO signupRequest) {
         if (userAccountRepository.existsByIdentityCode(signupRequest.getIdentityCode())) {
             return ResponseEntity
                 .badRequest()
@@ -96,8 +96,10 @@ public class AuthService {
                 signupRequest.getIdentityCode(),
                 signupRequest.getFirstName(),
                 signupRequest.getLastName(),
-                signupRequest.getDateOfBirth()
-            );
+                signupRequest.getDateOfBirth(),
+                signupRequest.getCountry(),
+                signupRequest.getPhoneNumber()
+                );
             personId = personService.createNewPerson(personDTO);
         }
 
@@ -106,11 +108,8 @@ public class AuthService {
         UserAccount userAccount = new UserAccount(
             personId,
             signupRequest.getUsername(),
-            signupRequest.getEmail(),
             passwordEncoder.encode(signupRequest.getPassword()),
-            signupRequest.getFirstName(),
-            signupRequest.getLastName(),
-            signupRequest.getCountry(),
+            signupRequest.getEmail(),
             signupRequest.getIdentityCode()
         );
 
@@ -124,22 +123,21 @@ public class AuthService {
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
-                    case "superuser":
+                    case "superuser" -> {
                         UserAccountRole adminRole = userAccountRoleRepository.findByRoleType(UserAccountRoleType.ROLE_SUPERUSER)
                             .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         userAccountRoles.add(adminRole);
-
-                        break;
-                    case "admin":
+                    }
+                    case "admin" -> {
                         UserAccountRole modRole = userAccountRoleRepository.findByRoleType(UserAccountRoleType.ROLE_ADMIN)
                             .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         userAccountRoles.add(modRole);
-
-                        break;
-                    default:
+                    }
+                    default -> {
                         UserAccountRole userRole = userAccountRoleRepository.findByRoleType(UserAccountRoleType.ROLE_DEFAULT_USER)
                             .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         userAccountRoles.add(userRole);
+                    }
                 }
             });
         }

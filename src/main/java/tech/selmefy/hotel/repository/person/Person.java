@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -43,6 +44,12 @@ public class Person implements Serializable {
     @NonNull
     @Column(nullable = false)
     private String lastName;
+
+    @NonNull
+    @NotBlank
+    private String country;
+
+    private String phoneNumber;
 
     @NonNull
     @Column(nullable = false)

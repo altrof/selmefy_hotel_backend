@@ -45,27 +45,15 @@ public class UserAccount {
     @Column(name = "account_user_name")
     private String username;
 
+    @NonNull
+    @NotBlank
+    private String password;
+
     @NotBlank
     @NonNull
     @Email
     @Column(name = "email")
     private String email;
-
-    @NonNull
-    @NotBlank
-    private String password;
-
-    @NonNull
-    @NotBlank
-    private String firstName;
-
-    @NonNull
-    @NotBlank
-    private String lastName;
-
-    @NonNull
-    @NotBlank
-    private String country;
 
     @Column(name = "person_identity_code")
     @NonNull

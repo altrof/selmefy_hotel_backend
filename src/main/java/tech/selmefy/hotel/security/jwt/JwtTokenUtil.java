@@ -4,7 +4,6 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.Authentication;
@@ -23,7 +22,7 @@ public class JwtTokenUtil {
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenUtil.class);
 
     private final SecretKey JWT_SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
-    private final static Integer JWT_EXPIRATION_TIME_MS = 7 * 86400;
+    private final static Integer JWT_EXPIRATION_TIME_MS = 86400000; // 24h
 
     public String generateJwtToken(Authentication authentication) {
 
@@ -43,8 +42,6 @@ public class JwtTokenUtil {
         try {
             Jwts.parserBuilder().setSigningKey(JWT_SECRET_KEY).build().parseClaimsJws(authToken);
             return true;
-        } catch (SignatureException e) {
-            logger.error("Invalid JWT signature: {}", e.getMessage());
         } catch (MalformedJwtException e) {
             logger.error("Invalid JWT token: {}", e.getMessage());
         } catch (ExpiredJwtException e) {

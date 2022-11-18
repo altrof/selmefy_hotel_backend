@@ -40,4 +40,6 @@ public class SignupRequestDTO {
 
     @Past
     private LocalDate dateOfBirth;
+
+    private String phoneNumber;
 }

@@ -11,19 +11,23 @@
 
     <changeSet id="HOT-105-remove-unnecessary-columns-and-constraint-from-user-account" author="Aleksandr Trofimov">
         <sql dbms="postgresql">
-            ALTER TABLE user_account DROP COLUMN is_employee;
-            ALTER TABLE user_account DROP COLUMN is_client;
+            ALTER TABLE user_account DROP COLUMN IF EXISTS is_employee;
+            ALTER TABLE user_account DROP COLUMN IF EXISTS is_client;
             ALTER TABLE user_account DROP CONSTRAINT IF EXISTS client_and_employee_cannot_both_be_false;
-            ALTER TABLE user_account DROP COLUMN e_mail;
+            ALTER TABLE user_account DROP COLUMN IF EXISTS e_mail;
         </sql>
     </changeSet>
 
     <changeSet id="HOT-105-add-columns-country-firstName-lastName-email" author="Aleksandr Trofimov">
         <sql dbms="postgresql">
-            ALTER TABLE user_account ADD COLUMN IF NOT EXISTS country TEXT;
-            ALTER TABLE user_account ADD COLUMN IF NOT EXISTS first_name TEXT;
-            ALTER TABLE user_account ADD COLUMN IF NOT EXISTS last_name TEXT;
-            ALTER TABLE user_account ADD COLUMN IF NOT EXISTS email TEXT;
+            ALTER TABLE person ADD COLUMN IF NOT EXISTS country TEXT DEFAULT NULL;
+            ALTER TABLE person ADD COLUMN IF NOT EXISTS phone_number TEXT DEFAULT NULL;
+            ALTER TABLE user_account ADD COLUMN IF NOT EXISTS email TEXT UNIQUE;
+
+            UPDATE user_account SET email = 'test1@email.com' WHERE account_user_name = 'marimaja';
+            UPDATE user_account SET email = 'test2@email.com' WHERE account_user_name = 'sibul';
+
+            ALTER TABLE user_account ALTER COLUMN email SET NOT NULL;
         </sql>
     </changeSet>
 
