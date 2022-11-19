@@ -16,9 +16,16 @@ import java.util.List;
 public class PersonController {
     public final PersonService personService;
 
-    @GetMapping
-    public List<PersonDTO> getAllPeople() {
-        return personService.getAllPeople();
+    @GetMapping(params = {"pageNumber", "pageSize"})
+    public List<PersonDTO> getAllPeople(
+            @RequestParam(name="pageNumber") int pageNumber,
+            @RequestParam(name="pageSize") int pageSize) {
+        // This is a failsafe to avoid requesting pages that are too big.
+        int maxPageSize = 200;
+        if (pageSize > maxPageSize) {
+            pageSize = maxPageSize;
+        }
+        return personService.getAllPeople(pageNumber, pageSize);
     }
 
     @GetMapping("/{personId}")

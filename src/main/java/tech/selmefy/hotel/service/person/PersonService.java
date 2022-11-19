@@ -1,6 +1,9 @@
 package tech.selmefy.hotel.service.person;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import tech.selmefy.hotel.controller.person.dto.PersonDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
@@ -19,8 +22,9 @@ import static tech.selmefy.hotel.validators.ObjectUtilityValidator.isNullOrEmpty
 public class PersonService {
     public final PersonRepository personRepository;
 
-    public List<PersonDTO> getAllPeople() {
-        List<Person> people = personRepository.findAll();
+    public List<PersonDTO> getAllPeople(int pageNumber, int pageSize) {
+        Pageable pageRequest = PageRequest.of(pageNumber, pageSize);
+        Page<Person> people = personRepository.findAll(pageRequest);
         List<PersonDTO> personDTOList = new ArrayList<>();
         for (Person person : people) {
             PersonDTO personDTO = PersonMapper.INSTANCE.toDTO(person);
