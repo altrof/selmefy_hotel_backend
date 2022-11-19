@@ -20,6 +20,7 @@ public class PersonController {
     public List<PersonDTO> getAllPeople() {
         return personService.getAllPeople();
     }
+    
 
     @GetMapping("/{personId}")
     public PersonDTO getPersonById(@PathVariable Long personId) {
