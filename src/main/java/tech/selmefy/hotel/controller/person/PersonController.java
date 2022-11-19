@@ -16,11 +16,18 @@ import java.util.List;
 public class PersonController {
     public final PersonService personService;
 
-    @GetMapping
-    public List<PersonDTO> getAllPeople() {
-        return personService.getAllPeople();
+    @GetMapping(params = {"pageNumber", "pageSize", "orderBy"})
+    public List<PersonDTO> getAllPeople(
+            @RequestParam(name="pageNumber") int pageNumber,
+            @RequestParam(name="pageSize") int pageSize,
+            @RequestParam(name="orderBy") String orderBy) {
+        // This is a failsafe to avoid requesting pages that are too big.
+        int maxPageSize = 200;
+        if (pageSize > maxPageSize) {
+            pageSize = maxPageSize;
+        }
+        return personService.getAllPeople(pageNumber, pageSize, orderBy);
     }
-    
 
     @GetMapping("/{personId}")
     public PersonDTO getPersonById(@PathVariable Long personId) {
