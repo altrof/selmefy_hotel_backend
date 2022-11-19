@@ -16,6 +16,7 @@ import java.util.List;
 public class PersonController {
     public final PersonService personService;
 
+    // Lisaparams: filterBy, filterValue
     @GetMapping(params = {"pageNumber", "pageSize", "orderBy"})
     public List<PersonDTO> getAllPeople(
             @RequestParam(name="pageNumber") int pageNumber,

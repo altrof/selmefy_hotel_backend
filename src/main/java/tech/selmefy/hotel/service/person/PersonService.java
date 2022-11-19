@@ -10,6 +10,7 @@ import tech.selmefy.hotel.controller.person.dto.PersonDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.mapper.PersonMapper;
 import tech.selmefy.hotel.repository.person.Person;
+import tech.selmefy.hotel.repository.person.PersonCriteriaRepository;
 import tech.selmefy.hotel.repository.person.PersonRepository;
 import org.springframework.lang.NonNull;
 
@@ -22,12 +23,13 @@ import static tech.selmefy.hotel.validators.ObjectUtilityValidator.isNullOrEmpty
 @AllArgsConstructor
 public class PersonService {
     public final PersonRepository personRepository;
+    public final PersonCriteriaRepository personCriteriaRepository;
 
     public List<PersonDTO> getAllPeople(int pageNumber, int pageSize, String orderBy) {
-        Sort sort = Sort.by(orderBy).ascending();
-        Pageable pageRequest = PageRequest.of(pageNumber, pageSize, sort);
-        Page<Person> people = personRepository.findAll(pageRequest);
+        List<Person> people = personCriteriaRepository.personSearch(pageNumber, pageSize, orderBy);
         List<PersonDTO> personDTOList = new ArrayList<>();
+
+        // Todo: Map directly to list instead of looping.
         for (Person person : people) {
             PersonDTO personDTO = PersonMapper.INSTANCE.toDTO(person);
             personDTOList.add(personDTO);
