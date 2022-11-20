@@ -9,6 +9,7 @@ import tech.selmefy.hotel.mapper.HotelServiceOrderMapper;
 import tech.selmefy.hotel.repository.hotelserviceorder.HotelServiceOrder;
 import tech.selmefy.hotel.repository.hotelserviceorder.HotelServiceOrderRepository;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +41,37 @@ public class HotelServiceOrderService {
         if (hotelServiceOrderDTO.getComments().length() > 1000) {
             throw new ApiRequestException("Comment length too long, keep it under 1000 characters");
         }
+
+        if (hotelServiceOrderDTO.getOrderTime().before(new Timestamp(System.currentTimeMillis()))) {
+            throw new ApiRequestException("Order time cannot be in the past!");
+        }
+
         HotelServiceOrder hotelServiceOrder = HotelServiceOrderMapper.INSTANCE.toEntity(hotelServiceOrderDTO);
         hotelServiceOrderRepository.save(hotelServiceOrder);
+    }
+
+    public HotelServiceOrderDTO updateHotelServiceOrder(Long id, @NonNull HotelServiceOrderDTO hotelServiceOrderDTO) {
+        HotelServiceOrder hotelServiceOrder = hotelServiceOrderRepository.findById(id).orElseThrow(
+                () -> new ApiRequestException("Booking does not exist with id: " + id));
+
+        if (hotelServiceOrderDTO.getComments().length() > 1000) {
+            throw new ApiRequestException("Comment length too long, keep it under 1000 characters");
+        }
+
+        if (hotelServiceOrderDTO.getPrice() < 0) {
+            throw new ApiRequestException("Price can't be negative!");
+        }
+
+        if (hotelServiceOrderDTO.getOrderTime().before(new Timestamp(System.currentTimeMillis()))) {
+            throw new ApiRequestException("Order time cannot be in the past!");
+        }
+
+        hotelServiceOrder.setServiceType(hotelServiceOrderDTO.getServiceType());
+        hotelServiceOrder.setPersonId(hotelServiceOrderDTO.getPersonId());
+        hotelServiceOrder.setOrderTime(hotelServiceOrderDTO.getOrderTime());
+        hotelServiceOrder.setPrice(hotelServiceOrderDTO.getPrice());
+        hotelServiceOrder.setComments(hotelServiceOrderDTO.getComments());
+        hotelServiceOrderRepository.save(hotelServiceOrder);
+        return HotelServiceOrderMapper.INSTANCE.toDTO(hotelServiceOrder);
     }
 }

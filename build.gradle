@@ -25,6 +25,15 @@ dependencies {
 	implementation 'org.liquibase:liquibase-core'
 	implementation 'org.mapstruct:mapstruct:1.5.2.Final'
 
+	// Spring Security
+	implementation "org.springframework.security:spring-security-core:$springSecurityVersion"
+	implementation "org.springframework.security:spring-security-config:$springSecurityVersion"
+	implementation "org.springframework.security:spring-security-web:$springSecurityVersion"
+	// JWT
+	implementation "io.jsonwebtoken:jjwt-api:$jjwtVersion"
+	runtimeOnly "io.jsonwebtoken:jjwt-impl:$jjwtVersion",
+			"io.jsonwebtoken:jjwt-jackson:$jjwtVersion"
+
 
 	implementation "io.springfox:springfox-swagger2:$springfoxSwaggerVersion"
 	implementation "io.springfox:springfox-swagger-ui:$springfoxSwaggerVersion"

@@ -30,15 +30,16 @@ public class BookingController {
     }
 
     @GetMapping("/{bookingId}")
-    public BookingDTO getPersonById(@PathVariable Long bookingId) {
+    public BookingDTO getBookingById(@PathVariable Long bookingId) {
         return bookingService.getBookingById(bookingId);
     }
 
-    @PostMapping(params = {"roomId", "personId"})
+    @PostMapping(params = {"roomId", "ownerId", "otherId"})
     public void createNewBooking(@RequestBody BookingDTO bookingDTO,
                                  @RequestParam(name="roomId") Long roomId,
-                                 @RequestParam(name = "personId") String personId) {
-        bookingService.createNewBooking(bookingDTO, roomId, personId);
+                                 @RequestParam(name="ownerId") String ownerId,
+                                 @RequestParam(name="otherId") List<String> otherId) {
+        bookingService.createNewBooking(bookingDTO, roomId, ownerId, otherId);
     }
 
     @PutMapping("/{bookingId}")
