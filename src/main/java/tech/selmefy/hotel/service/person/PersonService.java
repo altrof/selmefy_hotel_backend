@@ -31,11 +31,8 @@ public class PersonService {
         List<Person> people = personCriteriaRepository.personSearch(pageNumber, pageSize, orderBy, filterBy, filterValue);
         List<PersonDTO> personDTOList = new ArrayList<>();
 
-        // Todo: Map directly to list instead of looping.
-        for (Person person : people) {
-            PersonDTO personDTO = PersonMapper.INSTANCE.toDTO(person);
-            personDTOList.add(personDTO);
-        }
+        personDTOList = PersonMapper.INSTANCE.toDTOList(people);
+
         return personDTOList;
     }
     
