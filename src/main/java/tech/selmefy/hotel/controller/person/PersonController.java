@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.selmefy.hotel.controller.person.dto.PersonDTO;
+import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.service.person.PersonService;
 
 import java.util.List;
@@ -20,12 +21,28 @@ public class PersonController {
     // Lisaparams: filterBy, filterValue
     @GetMapping
     public List<PersonDTO> getAllPeople(
-            @RequestParam(name="pageNumber") int pageNumber,
-            @RequestParam(name="pageSize") int pageSize,
-            @RequestParam(name="orderBy") String orderBy,
-            @RequestParam(name = "filterBy", required = false) Optional<String> filterBy,
-            @RequestParam(name = "filterValue", required = false) Optional<String> filterValue) {
-        // This is a failsafe to avoid requesting pages that are too big.
+            @RequestParam(name="pageNumber", defaultValue = "0") int pageNumber,
+            @RequestParam(name="pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(name="orderBy", defaultValue = "lastName") String orderBy,
+            @RequestParam(name = "filterBy") Optional<String> filterBy,
+            @RequestParam(name = "filterValue") Optional<String> filterValue) {
+
+        // Ensures that only PersonDTO fields are used for sorting/searching.
+        try {
+            PersonDTO.class.getDeclaredField(orderBy);
+        } catch (NoSuchFieldException e) {
+            throw new ApiRequestException("Cannot sort by " + orderBy);
+        }
+
+        if (filterBy.isPresent()) {
+            try {
+                PersonDTO.class.getDeclaredField(filterBy.get());
+            } catch (NoSuchFieldException e) {
+                throw new ApiRequestException("Cannot filter by " + filterBy);
+            }
+        }
+
+        // This prevents requesting pages that are too big.
         int maxPageSize = 200;
         if (pageSize > maxPageSize) {
             pageSize = maxPageSize;
