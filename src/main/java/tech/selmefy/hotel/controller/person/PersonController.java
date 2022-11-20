@@ -8,6 +8,7 @@ import tech.selmefy.hotel.controller.person.dto.PersonDTO;
 import tech.selmefy.hotel.service.person.PersonService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Api(tags = "Person")
 @RestController
@@ -17,17 +18,19 @@ public class PersonController {
     public final PersonService personService;
 
     // Lisaparams: filterBy, filterValue
-    @GetMapping(params = {"pageNumber", "pageSize", "orderBy"})
+    @GetMapping
     public List<PersonDTO> getAllPeople(
             @RequestParam(name="pageNumber") int pageNumber,
             @RequestParam(name="pageSize") int pageSize,
-            @RequestParam(name="orderBy") String orderBy) {
+            @RequestParam(name="orderBy") String orderBy,
+            @RequestParam(name = "filterBy", required = false) Optional<String> filterBy,
+            @RequestParam(name = "filterValue", required = false) Optional<String> filterValue) {
         // This is a failsafe to avoid requesting pages that are too big.
         int maxPageSize = 200;
         if (pageSize > maxPageSize) {
             pageSize = maxPageSize;
         }
-        return personService.getAllPeople(pageNumber, pageSize, orderBy);
+        return personService.getAllPeople(pageNumber, pageSize, orderBy, filterBy, filterValue);
     }
 
     @GetMapping("/{personId}")

@@ -16,6 +16,7 @@ import org.springframework.lang.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static tech.selmefy.hotel.validators.ObjectUtilityValidator.isNullOrEmpty;
 
@@ -25,8 +26,9 @@ public class PersonService {
     public final PersonRepository personRepository;
     public final PersonCriteriaRepository personCriteriaRepository;
 
-    public List<PersonDTO> getAllPeople(int pageNumber, int pageSize, String orderBy) {
-        List<Person> people = personCriteriaRepository.personSearch(pageNumber, pageSize, orderBy);
+    public List<PersonDTO> getAllPeople(int pageNumber, int pageSize, String orderBy,
+        Optional<String> filterBy, Optional<String> filterValue) {
+        List<Person> people = personCriteriaRepository.personSearch(pageNumber, pageSize, orderBy, filterBy, filterValue);
         List<PersonDTO> personDTOList = new ArrayList<>();
 
         // Todo: Map directly to list instead of looping.
