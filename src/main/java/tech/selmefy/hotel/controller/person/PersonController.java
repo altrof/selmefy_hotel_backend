@@ -18,7 +18,6 @@ import java.util.Optional;
 public class PersonController {
     public final PersonService personService;
 
-    // Lisaparams: filterBy, filterValue
     @GetMapping
     public List<PersonDTO> getAllPeople(
             @RequestParam(name="pageNumber", defaultValue = "0") int pageNumber,
