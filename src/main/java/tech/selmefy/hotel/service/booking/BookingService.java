@@ -54,26 +54,32 @@ public class BookingService {
      */
     @Transactional
     public void createNewBooking(@NonNull BookingDTO bookingDTO, Long roomId,
-        String ownerIdentityCode, List<String> otherGuestsIdentityCodes) {
+        String ownerIdentityCode, Optional<List<String>> otherGuestsIdentityCodes) {
 
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ApiRequestException("No such room!"));
 
         validateBookingRequest(bookingDTO, room, Optional.empty());
 
+
+
+
         Person bookingOwner = personRepository.findPersonByIdentityCode(ownerIdentityCode)
             .orElseThrow(() -> new ApiRequestException("Owner of the booking is not in the database!"));
-        List<Person> otherPeople = otherGuestsIdentityCodes.stream()
-            .map(idCode -> personRepository.findPersonByIdentityCode(idCode).orElseThrow(
-                    () -> new ApiRequestException("Additional guest is not in the database: " + idCode))).toList();
+
         Booking booking = BookingMapper.INSTANCE.toEntity(bookingDTO);
         booking.setRoom(room);
         booking.setPerson(bookingOwner);
         bookingRepository.save(booking);
         addPersonInBooking(booking, bookingOwner);
 
-        for (Person person : otherPeople) {
-            addPersonInBooking(booking, person);
+        if (otherGuestsIdentityCodes.isPresent()) {
+            List<Person> otherPeople = otherGuestsIdentityCodes.get().stream()
+                    .map(idCode -> personRepository.findPersonByIdentityCode(idCode).orElseThrow(
+                            () -> new ApiRequestException("Additional guest is not in the database: " + idCode))).toList();
+            for (Person person : otherPeople) {
+                addPersonInBooking(booking, person);
+            }
         }
     }
 
