@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet id="HOT-105-remove-unnecessary-columns-and-constraint-from-user-account" author="Aleksandr Trofimov">
+        <sql dbms="postgresql">
+            ALTER TABLE user_account DROP COLUMN IF EXISTS is_employee;
+            ALTER TABLE user_account DROP COLUMN IF EXISTS is_client;
+            ALTER TABLE user_account DROP CONSTRAINT IF EXISTS client_and_employee_cannot_both_be_false;
+            ALTER TABLE user_account DROP COLUMN IF EXISTS e_mail;
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-105-add-columns-country-firstName-lastName-email" author="Aleksandr Trofimov">
+        <sql dbms="postgresql">
+            ALTER TABLE person ADD COLUMN IF NOT EXISTS country TEXT DEFAULT NULL;
+            ALTER TABLE person ADD COLUMN IF NOT EXISTS phone_number TEXT DEFAULT NULL;
+            ALTER TABLE user_account ADD COLUMN IF NOT EXISTS email TEXT UNIQUE;
+
+            UPDATE user_account SET email = 'test1@email.com' WHERE account_user_name = 'marimaja';
+            UPDATE user_account SET email = 'test2@email.com' WHERE account_user_name = 'sibul';
+
+            ALTER TABLE user_account ALTER COLUMN email SET NOT NULL;
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-105-insert-all-existed-users-into-user-roles-table-with-role-default-user" author="Aleksandr Trofimov">
+        <sql dbms="postgresql">
+            INSERT INTO user_roles (user_id, role_id)
+            SELECT DISTINCT person_id, 1 FROM user_account;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

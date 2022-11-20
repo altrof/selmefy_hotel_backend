@@ -20,7 +20,6 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-
 public class BookingService {
 
         public final BookingRepository bookingRepository;

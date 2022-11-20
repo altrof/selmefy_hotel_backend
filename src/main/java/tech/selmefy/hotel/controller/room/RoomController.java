@@ -40,7 +40,7 @@ public class RoomController {
         return roomService.getRoomById(roomId);
     }
 
-    @GetMapping("/{from}/{to}")
+    @GetMapping("/public/{from}/{to}")
     public List<RoomDTO> getAllAvailableRooms(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
                                               @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to) {
         return roomService.getRoomsAvailableBetweenDates(from, to);
