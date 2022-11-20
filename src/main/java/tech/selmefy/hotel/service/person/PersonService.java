@@ -6,11 +6,11 @@ import tech.selmefy.hotel.controller.person.dto.PersonDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.mapper.PersonMapper;
 import tech.selmefy.hotel.repository.person.Person;
+import tech.selmefy.hotel.repository.person.PersonCriteriaRepository;
 import tech.selmefy.hotel.repository.person.PersonRepository;
 import org.springframework.lang.NonNull;
-
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static tech.selmefy.hotel.validators.ObjectUtilityValidator.isNullOrEmpty;
 
@@ -18,14 +18,12 @@ import static tech.selmefy.hotel.validators.ObjectUtilityValidator.isNullOrEmpty
 @AllArgsConstructor
 public class PersonService {
     public final PersonRepository personRepository;
+    public final PersonCriteriaRepository personCriteriaRepository;
 
-    public List<PersonDTO> getAllPeople() {
-        List<Person> people = personRepository.findAll();
-        List<PersonDTO> personDTOList = new ArrayList<>();
-        for (Person person : people) {
-            PersonDTO personDTO = PersonMapper.INSTANCE.toDTO(person);
-            personDTOList.add(personDTO);
-        }
+    public List<PersonDTO> getAllPeople(int pageNumber, int pageSize, String orderBy,
+        Optional<String> filterBy, Optional<String> filterValue) {
+        List<Person> people = personCriteriaRepository.personSearch(pageNumber, pageSize, orderBy, filterBy, filterValue);
+        List<PersonDTO> personDTOList = PersonMapper.INSTANCE.toDTOList(people);
         return personDTOList;
     }
     
