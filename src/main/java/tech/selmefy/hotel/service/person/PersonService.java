@@ -1,10 +1,6 @@
 package tech.selmefy.hotel.service.person;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import tech.selmefy.hotel.controller.person.dto.PersonDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
@@ -13,8 +9,6 @@ import tech.selmefy.hotel.repository.person.Person;
 import tech.selmefy.hotel.repository.person.PersonCriteriaRepository;
 import tech.selmefy.hotel.repository.person.PersonRepository;
 import org.springframework.lang.NonNull;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,10 +23,7 @@ public class PersonService {
     public List<PersonDTO> getAllPeople(int pageNumber, int pageSize, String orderBy,
         Optional<String> filterBy, Optional<String> filterValue) {
         List<Person> people = personCriteriaRepository.personSearch(pageNumber, pageSize, orderBy, filterBy, filterValue);
-        List<PersonDTO> personDTOList = new ArrayList<>();
-
-        personDTOList = PersonMapper.INSTANCE.toDTOList(people);
-
+        List<PersonDTO> personDTOList = PersonMapper.INSTANCE.toDTOList(people);
         return personDTOList;
     }
     
