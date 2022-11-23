@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet id="HOT-105-create-user-roles-type-table" author="Aleksandr Trofimov">
+        <sql dbms="postgresql">
+            CREATE TABLE user_roles_type (
+                id BIGSERIAL PRIMARY KEY,
+                role_type TEXT NOT NULL
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-105-create-user-roles-table" author="Aleksandr Trofimov">
+        <sql dbms="postgresql">
+            CREATE TABLE user_roles (
+              user_id INTEGER NOT NULL,
+              role_id INTEGER NOT NULL
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-105-insert-roles-values-into-user-roles-type-table" author="Aleksandr Trofimov">
+        <sql dbms="postgresql">
+            INSERT INTO user_roles_type(role_type) VALUES ('ROLE_DEFAULT_USER');
+            INSERT INTO user_roles_type(role_type) VALUES ('ROLE_ADMIN');
+            INSERT INTO user_roles_type(role_type) VALUES('ROLE_SUPERUSER');
+        </sql>
+    </changeSet>
+
+
+</databaseChangeLog>

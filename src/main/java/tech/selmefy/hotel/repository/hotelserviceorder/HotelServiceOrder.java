@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.sql.Timestamp;
 
 
 @Entity(name = "hotel_service_order")
@@ -20,14 +20,14 @@ public class HotelServiceOrder {
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, insertable = false, updatable = false)
+    @Column(nullable = false)
     private Short serviceType;
 
-    @Column(nullable = false, insertable = false, updatable = false)
+    @Column(nullable = false)
     private String personId;
 
     @Column(nullable = false)
-    private LocalDate orderTime;
+    private Timestamp orderTime;
 
     @Column(nullable = false)
     private Long price;

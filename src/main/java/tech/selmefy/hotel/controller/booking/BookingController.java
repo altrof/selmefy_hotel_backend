@@ -15,6 +15,7 @@ import tech.selmefy.hotel.controller.booking.dto.BookingDTO;
 import tech.selmefy.hotel.service.booking.BookingService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Api(tags = "Booking")
 @RestController
@@ -30,15 +31,16 @@ public class BookingController {
     }
 
     @GetMapping("/{bookingId}")
-    public BookingDTO getPersonById(@PathVariable Long bookingId) {
+    public BookingDTO getBookingById(@PathVariable Long bookingId) {
         return bookingService.getBookingById(bookingId);
     }
 
-    @PostMapping(params = {"roomId", "personId"})
+    @PostMapping(params = {"roomId", "ownerId"})
     public void createNewBooking(@RequestBody BookingDTO bookingDTO,
                                  @RequestParam(name="roomId") Long roomId,
-                                 @RequestParam(name = "personId") String personId) {
-        bookingService.createNewBooking(bookingDTO, roomId, personId);
+                                 @RequestParam(name="ownerId") String ownerId,
+                                 @RequestParam(name="otherId") Optional<List<String>> otherId) {
+        bookingService.createNewBooking(bookingDTO, roomId, ownerId, otherId);
     }
 
     @PutMapping("/{bookingId}")
