@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 
 @Data
 @AllArgsConstructor
@@ -12,7 +12,7 @@ import java.time.LocalDate;
 public class HotelServiceOrderDTO {
     private Short serviceType;
     private String personId;
-    private LocalDate orderTime;
+    private Timestamp orderTime;
     private Long price;
     private String comments;
 }
