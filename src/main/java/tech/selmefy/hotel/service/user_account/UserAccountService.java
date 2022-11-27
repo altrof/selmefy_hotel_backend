@@ -26,6 +26,10 @@ public class UserAccountService implements UserDetailsService {
         return JwtUserDetails.build(userAccount);
     }
 
+    public int enableUserAccount(String email) {
+        return userAccountRepository.enableUserAccount(email);
+    }
+
     public List<UserAccount> getAllUsers() {
         return userAccountRepository.findAll();
     }
