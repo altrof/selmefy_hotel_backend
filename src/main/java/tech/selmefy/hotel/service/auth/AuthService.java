@@ -197,7 +197,6 @@ public class AuthService {
 
         emailConfirmationTokenService.saveEmailConfirmationToken(confirmationToken);
 
-        System.out.println("URL: " + appUtil.getClientBaseUrl());
         String link = appUtil.getClientBaseUrl() + "/confirm?token=" + token;
         emailSender.send(
             signupRequest.getEmail(),

@@ -4,8 +4,6 @@ version: "3.7" #have to use it unless you upgrade docker-compose
 services:
     hotel_backend:
         container_name: hotel_backend
-        environment:
-            SELMEFY_ENV_MODE: 'prod'
         build:
             context: .
             dockerfile: Dockerfile
@@ -22,9 +20,7 @@ services:
             - POSTGRES_USER=postgres
             - POSTGRES_PASSWORD=postgres
         ports:
-            - "5432:5432"
-        volumes:
-            - ./postgres-data:/var/lib/postgresql/data
+            - "5455:5432"
     # MailDev is for local test email receiving
     mail_dev:
         image: maildev/maildev
