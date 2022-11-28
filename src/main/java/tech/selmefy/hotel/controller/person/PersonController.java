@@ -49,12 +49,12 @@ public class PersonController {
         return personService.getAllPeople(pageNumber, pageSize, orderBy, filterBy, filterValue);
     }
 
-    @GetMapping("/{personId}")
+    @GetMapping("/public/{personId}")
     public PersonDTO getPersonById(@PathVariable Long personId) {
         return personService.getPersonById(personId);
     }
 
-    @PostMapping
+    @PostMapping("/public/")
     public void createNewPerson(@RequestBody PersonDTO personDTO) {
         personService.createNewPerson(personDTO);
     }
