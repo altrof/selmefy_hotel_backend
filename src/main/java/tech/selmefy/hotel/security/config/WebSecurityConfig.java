@@ -82,9 +82,8 @@ public class WebSecurityConfig {
             .antMatchers("/webjars/**")
             .antMatchers("/swagger-ui/**")
             .antMatchers("/docs/**")
-            // At the very least,  we will need to permit POST requests in certain public end-points.
-            .antMatchers("/**/public/**").anyRequest();
-
-
+            // We require POST methods in some of our public endpoints but no other methods at the moment.
+            .antMatchers(HttpMethod.GET,"/**/public/**")
+            .antMatchers(HttpMethod.POST,"/**/public/**");
     }
 }
