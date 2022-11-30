@@ -104,9 +104,7 @@ public class RoomService {
 
     private static boolean doesRoomTypeMatch(Room room, Optional<RoomType> requiredRoomType) {
         if (requiredRoomType.isPresent()) {
-            if (room.getRoomType() != requiredRoomType.get()) {
-                return false;
-            }
+            return room.getRoomType() == requiredRoomType.get();
         }
         return true;
     }
