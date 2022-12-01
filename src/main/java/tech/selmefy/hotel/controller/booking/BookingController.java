@@ -35,7 +35,7 @@ public class BookingController {
         return bookingService.getBookingById(bookingId);
     }
 
-    @PostMapping(params = {"roomId", "ownerId"})
+    @PostMapping(path = "/public", params = {"roomId", "ownerId"})
     public void createNewBooking(@RequestBody BookingDTO bookingDTO,
                                  @RequestParam(name="roomId") Long roomId,
                                  @RequestParam(name="ownerId") String ownerId,

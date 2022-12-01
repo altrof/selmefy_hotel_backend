@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RoomDTO {
+    // For RoomDTO, we actually need to know the id in DB.
+    private Long id;
     private Float size;
     private int floorId;
     private int roomNumber;

@@ -3,6 +3,7 @@ package tech.selmefy.hotel.security.config;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -81,6 +82,8 @@ public class WebSecurityConfig {
             .antMatchers("/webjars/**")
             .antMatchers("/swagger-ui/**")
             .antMatchers("/docs/**")
-            .antMatchers("/**/public/**");
+            // We require POST methods in some of our public endpoints but no other methods at the moment.
+            .antMatchers(HttpMethod.GET,"/**/public/**")
+            .antMatchers(HttpMethod.POST,"/**/public/**");
     }
 }
