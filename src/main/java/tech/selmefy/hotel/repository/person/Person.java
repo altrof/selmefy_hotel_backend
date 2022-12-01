@@ -18,7 +18,6 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @Getter
 @Setter
-@Builder
 public class Person implements Serializable {
     /*
     We need to implement Serializable for Person because non-PK column identityCode is used as foreign key elsewhere.

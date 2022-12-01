@@ -1,18 +1,20 @@
 package tech.selmefy.hotel.service.person;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import tech.selmefy.hotel.controller.person.dto.PersonDTO;
 import tech.selmefy.hotel.mapper.PersonMapper;
 import tech.selmefy.hotel.mapper.PersonMapperImpl;
 import tech.selmefy.hotel.repository.person.Person;
 import tech.selmefy.hotel.repository.person.PersonRepository;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -22,55 +24,79 @@ import static org.mockito.BDDMockito.then;
 @ExtendWith(MockitoExtension.class)
 class PersonServiceTest {
 
+    private PersonDTO personDTO1 = new PersonDTO("1","john","doe",LocalDate.of(2000, 10,5),"Estonia","555");
+    private PersonDTO personDTO2 = new PersonDTO("2","john","doe",LocalDate.of(2000, 10,5),"Estonia","555");
+    private PersonDTO personDTO3 = new PersonDTO("3","john","doe",LocalDate.of(2000, 10,5),"Estonia","555");
+    private Person person1 = new Person(1L,"1","john","doe","Estonia","555",LocalDate.of(2000, 10,5), new Timestamp(System.currentTimeMillis()));
+    private Person person2 = new Person(2L,"2","john","doe","Estonia","555",LocalDate.of(2000, 10,5), new Timestamp(System.currentTimeMillis()));
+    private Person person3 = new Person(3L,"3","john","doe","Estonia","555",LocalDate.of(2000, 10,5), new Timestamp(System.currentTimeMillis()));
+
     @Mock
     private PersonRepository personRepository;
+
     @Spy
     private PersonMapper personMapper = new PersonMapperImpl();
 
     @InjectMocks
     private PersonService personService;
-    @Test
-    void createNewPerson() {
-    }
-
-    @Test
-    void getAllPeople() {
-    }
 
     @Test
     void getPersonById() {
-
         //given
-        Person person = Person
-                .builder()
-                .id(1L)
-                .identityCode("1234")
-                .firstName("john")
-                .lastName("doe")
-                .dateOfBirth(LocalDate.of(2000, 10,5))
-                .country("Estonia")
-                .phoneNumber("555555555")
-                .build();
-        given(personRepository.findPersonByIdentityCode("1234")).willReturn(Optional.of(person));
+        given(personRepository.findById(3L)).willReturn(Optional.of(person3));
+
         //when
-        System.out.println(personRepository.findAll());
-        System.out.println(personRepository.findPersonByIdentityCode("1234").get().getId());
-        System.out.println(personRepository.findAll());
-        //var result = personService.getPersonById(personRepository.findPersonByIdentityCode("1234").get().getId());
+        var result = personService.getPersonById(3L);
+
         //then
+        assertEquals(personDTO3,result);
+    }
+
+    @Test
+    void getPersonByIdentityCode() {
+        //given
+        given(personRepository.findPersonByIdentityCode("1")).willReturn(Optional.of(person1));
+
+        //when
+        var result = personService.getPersonByIdentityCode("1").get();
+
+        //then
+        then(personRepository).should().findPersonByIdentityCode("1");
+
+        //did mapper use this method. doesnt see it cus our call to it is a bit different than usual
         //then(personMapper).should().toDTO(person);
-        then(personRepository).should().findPersonByIdentityCode("1234");
-        /*assertEquals(PersonDTO.builder()
-                .identityCode("1234")
-                .firstName("john")
-                .lastName("doe")
-                .dateOfBirth(LocalDate.of(2000, 10,5))
-                .country("Estonia")
-                .phoneNumber("555555555")
-                .build(), result);*/
+
+        assertEquals(personDTO1, result);
+
     }
 
     @Test
     void updatePerson() {
+        //given
+        given(personRepository.findById(2L)).willReturn(Optional.of(person2));
+
+        //when
+        var result = personService.updatePerson(2L,personDTO3);
+
+        //then
+        assertEquals(personDTO3,result);
+    }
+
+    @Test
+    void createNewPerson() {
+        /*//given
+        given(personService.createNewPerson(personDTO2)).willReturn(null);
+        //when
+
+        var result = personService.createNewPerson(personDTO2);
+        //then
+        //then(personRepository).should().save()
+        //if you put null instead of long gives another error
+        assertEquals(2L, result);*/
+
+    }
+
+    @Test
+    void getAllPeople() {
     }
 }
