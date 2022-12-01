@@ -50,6 +50,11 @@ public class PersonService {
             .orElseThrow(() -> new RuntimeException("Error: No person with provided id."));
     }
 
+    public Optional<PersonDTO> getPersonByIdentityCode(String personalIdentityCode) {
+        return personRepository.findPersonByIdentityCode(personalIdentityCode).map(PersonMapper.INSTANCE::toDTO);
+
+    }
+
     public PersonDTO updatePerson(Long personId, PersonDTO personDTO) {
         Person person = personRepository.findById(personId).orElseThrow(
                 () -> new ApiRequestException("Booking does not exist with id: " + personId));
