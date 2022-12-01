@@ -11,6 +11,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Repository
@@ -36,7 +37,8 @@ public class PersonCriteriaRepository {
         if (filterBy.isPresent() && filterValue.isPresent() && !filterBy.get().equals("") && !filterValue.get().equals("")) {
             // In case filtering by date of birth is used.
             if (PersonDTO.class.getDeclaredField(filterBy.get()).getType().equals(LocalDate.class)) {
-                LocalDate filterValueAsDate = LocalDate.parse(filterValue.get());
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDate filterValueAsDate = LocalDate.parse(filterValue.get(), formatter);
                 personCriteriaQuery.select(root).where(cb.between(root.get(filterBy.get()), filterValueAsDate, LocalDate.now()));
 
             // All other cases.
