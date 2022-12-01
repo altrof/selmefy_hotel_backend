@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tech.selmefy.hotel.controller.person.dto.PeopleResponseDTO;
 import tech.selmefy.hotel.controller.person.dto.PersonDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.service.person.PersonService;
@@ -18,11 +19,17 @@ import java.util.Optional;
 public class PersonController {
     public final PersonService personService;
 
+    @GetMapping("/all")
+    public List<PersonDTO> getAllPeople() {
+        return personService.getAllPeople();
+    }
+
     @GetMapping
-    public List<PersonDTO> getAllPeople(
+    public PeopleResponseDTO getAllPeopleWithParams(
             @RequestParam(name="pageNumber", defaultValue = "0") int pageNumber,
             @RequestParam(name="pageSize", defaultValue = "10") int pageSize,
             @RequestParam(name="orderBy", defaultValue = "lastName") String orderBy,
+            @RequestParam(name="orderType", defaultValue = "ASC") String orderType,
             @RequestParam(name = "filterBy") Optional<String> filterBy,
             @RequestParam(name = "filterValue") Optional<String> filterValue) {
 
@@ -46,7 +53,7 @@ public class PersonController {
         if (pageSize > maxPageSize) {
             pageSize = maxPageSize;
         }
-        return personService.getAllPeople(pageNumber, pageSize, orderBy, filterBy, filterValue);
+        return personService.getAllPeopleWithParams(pageNumber, pageSize, orderBy, orderType, filterBy, filterValue);
     }
 
     @GetMapping("/{personId}")

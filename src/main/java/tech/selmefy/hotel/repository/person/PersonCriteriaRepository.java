@@ -6,12 +6,11 @@ import org.springframework.stereotype.Repository;
 import tech.selmefy.hotel.controller.person.dto.PersonDTO;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,16 +20,20 @@ public class PersonCriteriaRepository {
     private final EntityManager entityManager;
 
     @SneakyThrows
-    public List<Person> personSearch(int pageNumber, int pageSize, String orderBy,
-                                     Optional<String> filterBy, Optional<String> filterValue) {
+    public TypedQuery<Person> personSearchQuery(String orderBy, String orderType, Optional<String> filterBy, Optional<String> filterValue) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Person> personCriteriaQuery = cb.createQuery(Person.class);
         Root<Person> root = personCriteriaQuery.from(Person.class);
         personCriteriaQuery.select(root);
-        personCriteriaQuery.orderBy(cb.asc(root.get(orderBy)));
-        if (filterBy.isPresent() && filterValue.isPresent()) {
 
+        if(orderType.equals("DESC")) {
+            personCriteriaQuery.orderBy(cb.desc(root.get(orderBy)));
+        } else {
+            personCriteriaQuery.orderBy(cb.asc(root.get(orderBy)));
+        }
+
+        if (filterBy.isPresent() && filterValue.isPresent() && !filterBy.get().equals("") && !filterValue.get().equals("")) {
             // In case filtering by date of birth is used.
             if (PersonDTO.class.getDeclaredField(filterBy.get()).getType().equals(LocalDate.class)) {
                 LocalDate filterValueAsDate = LocalDate.parse(filterValue.get());
@@ -42,10 +45,6 @@ public class PersonCriteriaRepository {
             }
         }
 
-        Query query = entityManager.createQuery(personCriteriaQuery);
-        query.setFirstResult(pageNumber * pageSize);
-        query.setMaxResults(pageSize);
-
-        return query.getResultList();
+        return entityManager.createQuery(personCriteriaQuery);
     }
 }
