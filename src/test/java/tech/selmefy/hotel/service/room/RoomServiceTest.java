@@ -33,12 +33,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class RoomServiceTest {
 
     private List<Room> roomList = new ArrayList<>();
-    Room room1 = new Room(1L, 5F, 1, 1, 5, RoomType.REGULAR, true);
-    Room room2 = new Room(2L, 10F, 1, 2, 2, RoomType.DELUXE, false);
-    Room room3 = new Room(3L, 10F, 1, 2, 2, RoomType.ECONOMY, false);
-    Room room4 = new Room(4L, 10F, 1, 2, 2, RoomType.REGULAR, false);
+    private Room room1 = new Room(1L, 5F, 1, 1, 5, RoomType.REGULAR, true);
+    private Room room2 = new Room(2L, 10F, 1, 2, 2, RoomType.DELUXE, false);
+    private Room room3 = new Room(3L, 10F, 1, 2, 2, RoomType.ECONOMY, false);
+    private Room room4 = new Room(4L, 10F, 1, 2, 2, RoomType.REGULAR, false);
 
-    List<Long> roomIdList = Arrays.asList(new Long[]{1L, 2L, 3L, 4L});
+    private List<Long> roomIdList = Arrays.asList(new Long[]{1L, 2L, 3L, 4L});
     @Mock
     private RoomRepository roomRepository;
 
