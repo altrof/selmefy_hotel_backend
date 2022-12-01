@@ -1,10 +1,7 @@
 package tech.selmefy.hotel.controller.room;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
+
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tech.selmefy.hotel.controller.room.dto.RoomDTO;
-import tech.selmefy.hotel.repository.room.Room;
 import tech.selmefy.hotel.service.room.RoomService;
 
 import java.util.ArrayList;
