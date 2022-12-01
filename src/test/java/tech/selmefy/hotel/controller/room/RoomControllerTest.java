@@ -14,6 +14,7 @@ import tech.selmefy.hotel.service.room.RoomService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,10 +54,10 @@ class RoomControllerTest {
         roomDTOList.add(room2);
         roomDTOList.add(room3);
         roomDTOList.add(room4);
-        BDDMockito.given(roomService.getAllRooms()).willReturn(roomDTOList);
+        BDDMockito.given(roomService.getAllRooms(0,10,"id", Optional.empty(), Optional.empty())).willReturn(roomDTOList);
 
         // when
-        List<RoomDTO> result = roomController.getAllRooms();
+        List<RoomDTO> result = roomController.getAllRooms(0,10, "id", Optional.empty(), Optional.empty());
 
         // then
         assertEquals(roomDTOList.size(), result.size());

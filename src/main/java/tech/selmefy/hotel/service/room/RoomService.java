@@ -1,5 +1,6 @@
 package tech.selmefy.hotel.service.room;
 
+import liquibase.pro.packaged.O;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import tech.selmefy.hotel.controller.booking.dto.BookingDTO;
@@ -8,10 +9,7 @@ import tech.selmefy.hotel.controller.room.dto.RoomDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.mapper.RoomAvailableHistoryMapper;
 import tech.selmefy.hotel.mapper.RoomMapper;
-import tech.selmefy.hotel.repository.room.Room;
-import tech.selmefy.hotel.repository.room.RoomAvailableHistory;
-import tech.selmefy.hotel.repository.room.RoomAvailableHistoryRepository;
-import tech.selmefy.hotel.repository.room.RoomRepository;
+import tech.selmefy.hotel.repository.room.*;
 import tech.selmefy.hotel.service.booking.BookingService;
 import tech.selmefy.hotel.service.room.type.RoomType;
 
@@ -32,9 +30,11 @@ public class RoomService {
     public final RoomRepository roomRepository;
     private BookingService bookingService;
     public final RoomAvailableHistoryRepository roomAvailableHistoryRepository;
+    public final RoomCriteriaRepository roomCriteriaRepository;
 
-    public List<RoomDTO> getAllRooms() {
-        List<Room> rooms = roomRepository.findAll();
+    public List<RoomDTO> getAllRooms(int pageNumber, int pageSize, String orderBy,
+                                     Optional<String> filterBy, Optional<String> filterValue) {
+        List<Room> rooms = roomCriteriaRepository.roomSearch(pageNumber, pageSize, orderBy);
         List<RoomDTO> roomDTOList = new ArrayList<>();
         for (Room room : rooms) {
             RoomDTO roomDTO = RoomMapper.INSTANCE.toDTO(room);
@@ -42,6 +42,16 @@ public class RoomService {
         }
         return roomDTOList;
     }
+
+//    public List<RoomDTO> getAllRooms() {
+//        List<Room> rooms = roomRepository.findAll();
+//        List<RoomDTO> roomDTOList = new ArrayList<>();
+//        for (Room room : rooms) {
+//            RoomDTO roomDTO = RoomMapper.INSTANCE.toDTO(room);
+//            roomDTOList.add(roomDTO);
+//        }
+//        return roomDTOList;
+//    }
 
     public List<RoomDTO> getRoomsByType(String roomType) {
         return roomRepository.findRoomsByRoomType(RoomType.valueOf(roomType.toUpperCase())).stream()

@@ -68,7 +68,7 @@ class RoomServiceTest {
         BDDMockito.given(roomRepository.findAll()).willReturn(roomList);
 
         // when
-        List<RoomDTO> result = roomService.getAllRooms();
+        List<RoomDTO> result = roomService.getAllRooms(0,10, "id", Optional.empty(), Optional.empty());
 
         // then
         assertEquals(roomList.size(), result.size());

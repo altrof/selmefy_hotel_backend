@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import tech.selmefy.hotel.controller.person.dto.PersonDTO;
 import tech.selmefy.hotel.controller.room.dto.RoomAvailableHistoryDTO;
 import tech.selmefy.hotel.controller.room.dto.RoomDTO;
+import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.service.room.RoomService;
 import tech.selmefy.hotel.service.room.type.RoomType;
 
@@ -27,8 +29,34 @@ import java.util.Optional;
 public class RoomController {
     public final RoomService roomService;
     @GetMapping
-    public List<RoomDTO> getAllRooms() {
-        return roomService.getAllRooms();
+    public List<RoomDTO> getAllRooms(
+            @RequestParam(name="pageNumber", defaultValue = "0") int pageNumber,
+            @RequestParam(name="pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(name="orderBy", defaultValue = "id") String orderBy,
+            @RequestParam(name = "filterBy") Optional<String> filterBy,
+            @RequestParam(name = "filterValue") Optional<String> filterValue) {
+
+        // Ensures that only RoomDTO fields are used for sorting/searching.
+        try {
+            RoomDTO.class.getDeclaredField(orderBy);
+        } catch (NoSuchFieldException e) {
+            throw new ApiRequestException("Cannot sort by " + orderBy);
+        }
+
+        if (filterBy.isPresent()) {
+            try {
+                RoomDTO.class.getDeclaredField(filterBy.get());
+            } catch (NoSuchFieldException e) {
+                throw new ApiRequestException("Cannot filter by " + filterBy);
+            }
+        }
+
+        // This prevents requesting pages that are too big.
+        int maxPageSize = 200;
+        if (pageSize > maxPageSize) {
+            pageSize = maxPageSize;
+        }
+        return roomService.getAllRooms(pageNumber, pageSize, orderBy, filterBy, filterValue);
     }
 
     @ResponseBody
