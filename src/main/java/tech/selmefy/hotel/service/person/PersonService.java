@@ -2,6 +2,7 @@ package tech.selmefy.hotel.service.person;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import tech.selmefy.hotel.controller.person.dto.PeopleResponseDTO;
 import tech.selmefy.hotel.controller.person.dto.PersonDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.mapper.PersonMapper;
@@ -11,6 +12,7 @@ import tech.selmefy.hotel.repository.person.PersonRepository;
 import org.springframework.lang.NonNull;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.TypedQuery;
 
 import static tech.selmefy.hotel.validators.ObjectUtilityValidator.isNullOrEmpty;
 
@@ -20,11 +22,28 @@ public class PersonService {
     public final PersonRepository personRepository;
     public final PersonCriteriaRepository personCriteriaRepository;
 
-    public List<PersonDTO> getAllPeople(int pageNumber, int pageSize, String orderBy,
-        Optional<String> filterBy, Optional<String> filterValue) {
-        List<Person> people = personCriteriaRepository.personSearch(pageNumber, pageSize, orderBy, filterBy, filterValue);
-        List<PersonDTO> personDTOList = PersonMapper.INSTANCE.toDTOList(people);
-        return personDTOList;
+    public List<PersonDTO> getAllPeople() {
+        return personRepository.findAll().stream().map(PersonMapper.INSTANCE::toDTO).toList();
+    }
+
+    public PeopleResponseDTO getAllPeopleWithParams(int pageNumber, int pageSize, String orderBy, String orderType,
+                                                    Optional<String> filterBy, Optional<String> filterValue) {
+        TypedQuery<Person> peopleSortedQuery = personCriteriaRepository.personSearchQuery(orderBy, orderType, filterBy, filterValue);
+
+        int peopleLength;
+        if (filterBy.isEmpty() && filterValue.isEmpty()) {
+            peopleLength = personRepository.findAll().size();
+        } else {
+            peopleLength = peopleSortedQuery.getResultList().size();
+        }
+
+        peopleSortedQuery.setFirstResult(pageNumber * pageSize);
+        peopleSortedQuery.setMaxResults(pageSize);
+        List<Person> peopleSortedList = peopleSortedQuery.getResultList();
+        List<PersonDTO> personDTOList = PersonMapper.INSTANCE.toDTOList(peopleSortedList);
+
+
+        return new PeopleResponseDTO(personDTOList, peopleLength);
     }
     
     public Long createNewPerson(@NonNull PersonDTO personDTO) {
