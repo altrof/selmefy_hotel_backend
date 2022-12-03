@@ -111,8 +111,8 @@ public class BookingService {
         if (!isRoomAvailable(room, bookingDTO.getCheckInDate(), bookingDTO.getCheckOutDate(), originalBooking)) {
             logger.warn("Ran into exception that room is not available.");
             logger.warn(String.format("Check-in : %s", bookingDTO.getCheckInDate()));
-            logger.warn("Check-out :" + bookingDTO.getCheckOutDate());
-            logger.warn("Room :" + room.getId());
+            logger.warn(String.format("Check-out : %s", bookingDTO.getCheckOutDate()));
+            logger.warn(String.format("Room : %s", room.getId()));
             throw new ApiRequestException("Room is not available at the provided dates!");
         }
     }
