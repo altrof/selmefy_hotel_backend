@@ -2,6 +2,8 @@ package tech.selmefy.hotel.service.booking;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import tech.selmefy.hotel.controller.booking.dto.BookingDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
@@ -24,11 +26,10 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class BookingService {
-
+        private static final Logger logger = LoggerFactory.getLogger(BookingService.class);
         public final BookingRepository bookingRepository;
         public final PersonRepository personRepository;
         public final RoomRepository roomRepository;
-
         public final PersonInBookingRepository personInBookingRepository;
 
 
@@ -107,6 +108,10 @@ public class BookingService {
         }
 
         if (!isRoomAvailable(room, bookingDTO.getCheckInDate(), bookingDTO.getCheckOutDate(), originalBooking)) {
+            logger.warn("Ran into exception that room is not available.");
+            logger.warn(String.format("Check-in : %s", bookingDTO.getCheckInDate()));
+            logger.warn("Check-out :" + bookingDTO.getCheckOutDate());
+            logger.warn("Room :" + room.getId());
             throw new ApiRequestException("Room is not available at the provided dates!");
         }
     }
@@ -117,6 +122,7 @@ public class BookingService {
     }
     private boolean isRoomAvailable(Room room, LocalDate fromDate, LocalDate toDate, Optional<Booking> bookingUpdate) {
         if (room.getRoomAvailableForBooking().equals(Boolean.FALSE)) {
+            logger.info(String.format("Returned false due to room %s not being available for booking.", room.getId()));
             return false;
         } else {
             List<Booking> bookings = bookingRepository.findAll();
@@ -129,6 +135,7 @@ public class BookingService {
                         && toDate.isAfter(booking.getCheckInDate()))
                         ||
                         (fromDate.isBefore(booking.getCheckOutDate()))) {
+                    logger.info(String.format("Returned false due to mismatch in booking dates."));
                     return false;
                 }
             }
