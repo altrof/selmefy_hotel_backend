@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -125,21 +126,28 @@ public class BookingService {
             logger.info(String.format("Returned false due to room %s not being available for booking.", room.getId()));
             return false;
         } else {
-            List<Booking> bookings = bookingRepository.findAll();
+            List<Booking> bookings = bookingRepository.findAll().stream()
+                .filter(booking -> booking.getRoomId() == room.getId()).collect(Collectors.toList());
             bookingUpdate.ifPresent(bookings::remove);
             for (Booking booking : bookings) {
-                if (
-                    (Objects.equals(booking.getRoomId(), room.getId()))
-                    &&
-                        (fromDate.isBefore(booking.getCheckInDate())
-                        && toDate.isAfter(booking.getCheckInDate()))
-                        ||
-                        (fromDate.isBefore(booking.getCheckOutDate()))) {
-                    logger.info(String.format("Returned false due to mismatch in booking dates."));
-                    return false;
+                logger.info(String.format("Requested room id: %s, booking room id: %s", room.getId(), booking.getRoomId()));
+                logger.info(String.format("Comparing existing bookings to requested dates"));
+                logger.info(String.format("Requested start date: %s, date in booking: %s", fromDate, booking.getCheckInDate()));
+                logger.info(String.format("Requested end date: %s, date in booking: %s", toDate, booking.getCheckOutDate()));
+                if (fromDate.isBefore(booking.getCheckInDate())) {
+                    if (toDate.isAfter(booking.getCheckInDate())) {
+                        logger.info(String.format("Returned false case 1."));
+                        return false;
+                        }
+                    }
+                else if (fromDate.isBefore(booking.getCheckOutDate())) {
+                    if (toDate.isAfter(booking.getCheckInDate()) || toDate.isAfter(booking.getCheckOutDate())) {
+                        logger.info(String.format("Returned false case 2."));
+                        return false;
+                        }
+                    }
                 }
             }
-        }
         return true;
     }
 
