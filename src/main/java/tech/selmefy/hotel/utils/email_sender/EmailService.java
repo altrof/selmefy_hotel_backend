@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,9 @@ public class EmailService implements EmailSender {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Autowired
+    private JavaMailSenderImpl mailSenderImpl;
+
     @Value("${spring.mail.username}")
     private String emailSender;
 
@@ -26,14 +30,19 @@ public class EmailService implements EmailSender {
     @Async
     public void send(String to, String email) {
         try {
-            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessage mimeMessage = mailSenderImpl.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
 
             helper.setText(email, true);
             helper.setTo(to);
             helper.setSubject("Confirm your email");
-            helper.setFrom(emailSender);
-            mailSender.send(mimeMessage);
+            LOGGER.info(mailSenderImpl.getHost());
+            LOGGER.info(String.valueOf(mailSenderImpl.getPort()));
+            LOGGER.info(mailSenderImpl.getUsername());
+            LOGGER.info(String.valueOf(mailSenderImpl.getJavaMailProperties()));
+            LOGGER.info(mailSenderImpl.getDefaultEncoding());
+            LOGGER.info(emailSender + " send to " + to);
+            mailSenderImpl.send(mimeMessage);
 
         } catch (MessagingException e) {
             LOGGER.error("Failed to send email ", e);
