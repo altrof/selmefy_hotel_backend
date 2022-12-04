@@ -59,12 +59,24 @@ public class RoomService {
      * @param toDate end date of the search
      * @return List of RoomDTO-s that available between the two provided dates.
      */
-    public List<RoomDTO> getRoomsAvailableBetweenDates(LocalDate fromDate, LocalDate toDate) {
+    public List<RoomDTO> getAvailableRooms(
+        LocalDate fromDate,
+        LocalDate toDate,
+        short adults,
+        short children,
+        Optional<RoomType> roomType) {
+
         if (fromDate.isEqual(toDate) || fromDate.isAfter(toDate)) {
             throw new IllegalArgumentException("Start date must be earlier than end date");
         }
+
+        if (adults == 0) {
+            throw new IllegalArgumentException("At least one adult needs to be present");
+        }
         Map<Long, Room> rooms = roomRepository.findAll().stream()
-                .collect(Collectors.toMap(Room::getId, Function.identity()));
+            .filter(room -> doesRoomTypeMatch(room, roomType))
+            .filter(room -> room.getNumberOfBeds() >= adults + children)
+            .collect(Collectors.toMap(Room::getId, Function.identity()));
         List<BookingDTO> bookings = bookingService.getAllBookings();
 
         for (BookingDTO booking : bookings) {
@@ -88,6 +100,13 @@ public class RoomService {
     private void transformToRoomDTOAndPutToList(Room room, List<RoomDTO> roomDTOList) {
         RoomDTO roomDTO = RoomMapper.INSTANCE.toDTO(room);
         roomDTOList.add(roomDTO);
+    }
+
+    private static boolean doesRoomTypeMatch(Room room, Optional<RoomType> requiredRoomType) {
+        if (requiredRoomType.isPresent()) {
+            return room.getRoomType() == requiredRoomType.get();
+        }
+        return true;
     }
 
     public List<RoomAvailableHistoryDTO> getRoomAvailableHistoryByRoomId(Long roomId) {

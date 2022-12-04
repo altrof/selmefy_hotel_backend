@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 import tech.selmefy.hotel.controller.room.dto.RoomAvailableHistoryDTO;
 import tech.selmefy.hotel.controller.room.dto.RoomDTO;
 import tech.selmefy.hotel.service.room.RoomService;
+import tech.selmefy.hotel.service.room.type.RoomType;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Api(tags = "Room")
 @RestController
@@ -41,9 +43,13 @@ public class RoomController {
     }
 
     @GetMapping("/public/{from}/{to}")
-    public List<RoomDTO> getAllAvailableRooms(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
-                                              @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to) {
-        return roomService.getRoomsAvailableBetweenDates(from, to);
+    public List<RoomDTO> getAllAvailableRooms(
+            @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
+            @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to,
+            @RequestParam(name = "adults", defaultValue = "1") short adults,
+            @RequestParam(name = "children", defaultValue = "0") short children,
+            @RequestParam(name = "roomType") Optional<RoomType> roomType) {
+        return roomService.getAvailableRooms(from, to, adults, children, roomType);
     }
 
     @PutMapping("/available/{roomId}")

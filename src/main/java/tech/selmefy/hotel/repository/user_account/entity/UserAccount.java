@@ -65,4 +65,6 @@ public class UserAccount {
         inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<UserAccountRole> roles = new HashSet<>();
 
+    private Boolean enabled = false;
+    private Boolean locked = false;
 }

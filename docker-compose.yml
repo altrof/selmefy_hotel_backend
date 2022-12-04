@@ -20,6 +20,11 @@ services:
             - POSTGRES_USER=postgres
             - POSTGRES_PASSWORD=postgres
         ports:
-            - '5432:5432'
-        volumes:
-            - ./postgres-data:/var/lib/postgresql/data
+            - "5455:5432"
+    # MailDev is for local test email receiving
+    mail_dev:
+        image: maildev/maildev
+        ports:
+            - "1080:1080" # use this to mail UI - http://localhost:1080
+            - "1025:1025"
+

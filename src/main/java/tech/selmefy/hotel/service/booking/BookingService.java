@@ -2,6 +2,8 @@ package tech.selmefy.hotel.service.booking;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import tech.selmefy.hotel.controller.booking.dto.BookingDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
@@ -20,15 +22,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class BookingService {
-
+        private static final Logger logger = LoggerFactory.getLogger(BookingService.class);
         public final BookingRepository bookingRepository;
         public final PersonRepository personRepository;
         public final RoomRepository roomRepository;
-
         public final PersonInBookingRepository personInBookingRepository;
 
 
@@ -107,6 +109,10 @@ public class BookingService {
         }
 
         if (!isRoomAvailable(room, bookingDTO.getCheckInDate(), bookingDTO.getCheckOutDate(), originalBooking)) {
+            logger.warn("Ran into exception that room is not available.");
+            logger.warn(String.format("Check-in : %s", bookingDTO.getCheckInDate()));
+            logger.warn(String.format("Check-out : %s", bookingDTO.getCheckOutDate()));
+            logger.warn(String.format("Room : %s", room.getId()));
             throw new ApiRequestException("Room is not available at the provided dates!");
         }
     }
@@ -117,22 +123,31 @@ public class BookingService {
     }
     private boolean isRoomAvailable(Room room, LocalDate fromDate, LocalDate toDate, Optional<Booking> bookingUpdate) {
         if (room.getRoomAvailableForBooking().equals(Boolean.FALSE)) {
+            logger.info(String.format("Returned false due to room %s not being available for booking.", room.getId()));
             return false;
         } else {
-            List<Booking> bookings = bookingRepository.findAll();
+            List<Booking> bookings = bookingRepository.findAll().stream()
+                .filter(booking -> booking.getRoomId() == room.getId()).collect(Collectors.toList());
             bookingUpdate.ifPresent(bookings::remove);
             for (Booking booking : bookings) {
-                if (
-                    (Objects.equals(booking.getRoomId(), room.getId()))
-                    &&
-                        (fromDate.isBefore(booking.getCheckInDate())
-                        && toDate.isAfter(booking.getCheckInDate()))
-                        ||
-                        (fromDate.isBefore(booking.getCheckOutDate()))) {
-                    return false;
+                logger.info(String.format("Requested room id: %s, booking room id: %s", room.getId(), booking.getRoomId()));
+                logger.info(String.format("Comparing existing bookings to requested dates"));
+                logger.info(String.format("Requested start date: %s, date in booking: %s", fromDate, booking.getCheckInDate()));
+                logger.info(String.format("Requested end date: %s, date in booking: %s", toDate, booking.getCheckOutDate()));
+                if (fromDate.isBefore(booking.getCheckInDate())) {
+                    if (toDate.isAfter(booking.getCheckInDate())) {
+                        logger.info(String.format("Returned false case 1."));
+                        return false;
+                        }
+                    }
+                else if (fromDate.isBefore(booking.getCheckOutDate())) {
+                    if (toDate.isAfter(booking.getCheckInDate()) || toDate.isAfter(booking.getCheckOutDate())) {
+                        logger.info(String.format("Returned false case 2."));
+                        return false;
+                        }
+                    }
                 }
             }
-        }
         return true;
     }
 
