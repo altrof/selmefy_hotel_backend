@@ -8,6 +8,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -20,19 +22,25 @@ public class EmailService implements EmailSender {
     private JavaMailSender mailSender;
 
     @Value("${spring.mail.username}")
-    private String emailSender;
+    private String SERVICE_EMAIL_ADDRESS;
+
+    @Autowired
+    private SpringTemplateEngine thymeleafTemplateEngine;
 
     @Override
     @Async
-    public void send(String to, String email) {
+    public void sendHtmlMessage(String to, String htmlTemplate, Context ctx) {
         try {
-            MimeMessage mimeMessage = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
 
-            helper.setText(email, true);
+            String htmlBody = thymeleafTemplateEngine.process(htmlTemplate, ctx);
+
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
+
+            helper.setFrom(SERVICE_EMAIL_ADDRESS);
             helper.setTo(to);
             helper.setSubject("Confirm your email");
-            helper.setFrom(emailSender);
+            helper.setText(htmlBody, true);
             mailSender.send(mimeMessage);
 
         } catch (MessagingException e) {
