@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet id="HOT-97-add-price-column-to-room_type-table-in-database-update-table" author="Anti Natka">
+        <sql dbms="postgresql">
+            ALTER TABLE room_type
+                ADD COLUMN price NUMERIC(5,2);
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-97-add-price-column-to-room_type-table-in-database-insert-values" author="Anti Natka">
+        <sql dbms="postgresql">
+            UPDATE room_type
+            SET price=100.00 WHERE type_name='REGULAR';
+
+            UPDATE room_type
+            SET price=245.00 WHERE type_name='DELUXE';
+
+            UPDATE room_type
+            SET price=135.00 WHERE type_name='KING_SIZE';
+
+            UPDATE room_type
+            SET price=80.00 WHERE type_name='ECONOMY';
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-97-add-price-column-to-room_type-table-in-database-constraint" author="Anti Natka">
+        <sql dbms="postgresql">
+            ALTER TABLE room_type
+                ALTER COLUMN price SET NOT NULL;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

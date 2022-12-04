@@ -23,7 +23,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.liquibase:liquibase-core'
+
+	// Mapstruct
 	implementation 'org.mapstruct:mapstruct:1.5.2.Final'
+
+	// Spring Boot Start Mail
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
 	// Spring Security
 	implementation "org.springframework.security:spring-security-core:$springSecurityVersion"
@@ -34,22 +39,30 @@ dependencies {
 	runtimeOnly "io.jsonwebtoken:jjwt-impl:$jjwtVersion",
 			"io.jsonwebtoken:jjwt-jackson:$jjwtVersion"
 
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
 	implementation "io.springfox:springfox-swagger2:$springfoxSwaggerVersion"
 	implementation "io.springfox:springfox-swagger-ui:$springfoxSwaggerVersion"
 	implementation "io.springfox:springfox-bean-validators:$springfoxSwaggerVersion"
 
+	// Logger
+	implementation 'org.apache.logging.log4j:log4j-api:2.19.0'
+	implementation 'org.apache.logging.log4j:log4j-core:2.19.0'
+
 	compileOnly 'org.projectlombok:lombok'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'org.postgresql:postgresql'
 
 	annotationProcessor 'org.projectlombok:lombok'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.2.Final'
 
+	// For testing
+	testImplementation 'org.testcontainers:postgresql:1.17.6'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation "org.springframework.security:spring-security-test:$springSecurityVersion"
+
 }
 
 tasks.named('test') {
