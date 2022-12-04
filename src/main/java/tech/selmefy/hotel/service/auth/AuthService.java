@@ -29,6 +29,7 @@ import tech.selmefy.hotel.utils.email_sender.EmailSender;
 import tech.selmefy.hotel.validators.EmailValidator;
 import tech.selmefy.hotel.service.person.PersonService;
 import tech.selmefy.hotel.service.user_account.UserAccountService;
+import static tech.selmefy.hotel.validators.ObjectUtilityValidator.isNullOrEmpty;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -99,6 +100,56 @@ public class AuthService {
     }
 
     public ResponseEntity<Object> registerUser(SignupRequestDTO signupRequest) {
+
+        // Username is cant be null
+        if (isNullOrEmpty(signupRequest.getUsername())) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Username is required.");
+        }
+
+        // Password is cant be null
+        if (isNullOrEmpty(signupRequest.getPassword())) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Password is required.");
+        }
+
+        // Identity code is cant be null
+        if (isNullOrEmpty(signupRequest.getIdentityCode())) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Identity code is required.");
+        }
+
+        // Firstname is cant be null
+        if (isNullOrEmpty(signupRequest.getFirstName())) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Firstname is required.");
+        }
+
+        // Lastname is cant be null
+        if (isNullOrEmpty(signupRequest.getLastName())) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Lastname is required.");
+        }
+
+        // Country is cant be null
+        if (isNullOrEmpty(signupRequest.getCountry())) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Country is required.");
+        }
+
+        // Phone number is cant be null
+        if (isNullOrEmpty(signupRequest.getPhoneNumber())) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Phone number is required.");
+        }
+
         if (userAccountRepository.existsByIdentityCode(signupRequest.getIdentityCode())) {
             return ResponseEntity
                 .badRequest()
@@ -117,16 +168,32 @@ public class AuthService {
                 .body("Error: Email is already in use!");
         }
 
+        // Email validation with regex pattern
         if (!emailValidator.test(signupRequest.getEmail())) {
             return ResponseEntity
                 .badRequest()
                 .body("Error: Email is not valid");
         }
 
-        if(Period.between(signupRequest.getDateOfBirth(), LocalDate.now()).getYears() < 18) {
+        // Validation for date of birt. 18+
+        if (Period.between(signupRequest.getDateOfBirth(), LocalDate.now()).getYears() < 18) {
             return ResponseEntity
                 .badRequest()
                 .body("Error: You are less than 18 years old.");
+        }
+
+        // User length should be not less than 6 chars
+        if (signupRequest.getUsername().length() < 6) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Username minimum length is 6.");
+        }
+
+        // User length should be not less than 6 chars
+        if (signupRequest.getPassword().length() < 6) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Username minimum length is 6.");
         }
 
         Long personId;
