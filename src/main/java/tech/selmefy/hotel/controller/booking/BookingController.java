@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import tech.selmefy.hotel.controller.booking.dto.BookingDTO;
+import tech.selmefy.hotel.controller.booking.dto.BookingResponseDTO;
+import tech.selmefy.hotel.controller.person.dto.PeopleResponseDTO;
+import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.service.booking.BookingService;
 
 import java.util.List;
@@ -26,8 +29,35 @@ public class BookingController {
     public final BookingService bookingService;
 
     @GetMapping
-    public List<BookingDTO> getAllBookings() {
-        return bookingService.getAllBookings();
+    public BookingResponseDTO getAllBookingsWithParams(
+            @RequestParam(name="pageNumber", defaultValue = "0") int pageNumber,
+            @RequestParam(name="pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(name="orderBy", defaultValue = "price") String orderBy,
+            @RequestParam(name="orderType", defaultValue = "ASC") String orderType,
+            @RequestParam(name = "filterBy") Optional<String> filterBy,
+            @RequestParam(name = "filterValue") Optional<String> filterValue) {
+
+        // Ensures that only BookingDTO fields are used for sorting/searching.
+        try {
+            BookingDTO.class.getDeclaredField(orderBy);
+        } catch (NoSuchFieldException e) {
+            throw new ApiRequestException("Cannot sort by " + orderBy);
+        }
+
+        if (filterBy.isPresent()) {
+            try {
+                BookingDTO.class.getDeclaredField(filterBy.get());
+            } catch (NoSuchFieldException e) {
+                throw new ApiRequestException("Cannot filter by " + filterBy);
+            }
+        }
+
+        int maxPageSize = 200;
+        if (pageSize > maxPageSize) {
+            pageSize = maxPageSize;
+        }
+
+        return bookingService.getAllBookingsWithParams(pageNumber, pageSize, orderBy, orderType, filterBy, filterValue);
     }
 
     @GetMapping("/{bookingId}")

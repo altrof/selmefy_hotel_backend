@@ -6,21 +6,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import tech.selmefy.hotel.controller.booking.dto.BookingDTO;
+import tech.selmefy.hotel.controller.booking.dto.BookingResponseDTO;
+import tech.selmefy.hotel.controller.person.dto.PeopleResponseDTO;
+import tech.selmefy.hotel.controller.person.dto.PersonDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.mapper.BookingMapper;
+import tech.selmefy.hotel.mapper.PersonMapper;
 import tech.selmefy.hotel.repository.booking.Booking;
+import tech.selmefy.hotel.repository.booking.BookingCriteriaRepository;
 import tech.selmefy.hotel.repository.booking.BookingRepository;
 import tech.selmefy.hotel.repository.person.Person;
+import tech.selmefy.hotel.repository.person.PersonCriteriaRepository;
 import tech.selmefy.hotel.repository.person.PersonRepository;
 import tech.selmefy.hotel.repository.personinbooking.PersonInBookingRepository;
 import tech.selmefy.hotel.repository.room.Room;
 import tech.selmefy.hotel.repository.room.RoomRepository;
 
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -33,15 +39,31 @@ public class BookingService {
         public final RoomRepository roomRepository;
         public final PersonInBookingRepository personInBookingRepository;
 
+        public final BookingCriteriaRepository bookingCriteriaRepository;
+
 
     public List<BookingDTO> getAllBookings() {
-        List<Booking> bookings = bookingRepository.findAll();
-        List<BookingDTO> bookingDTOList = new ArrayList<>();
-        for (Booking booking : bookings) {
-            BookingDTO bookingDTO = BookingMapper.INSTANCE.toDTO(booking);
-            bookingDTOList.add(bookingDTO);
+        return bookingRepository.findAll().stream().map(BookingMapper.INSTANCE::toDTO).toList();
+    }
+
+    public BookingResponseDTO getAllBookingsWithParams(int pageNumber, int pageSize, String orderBy, String orderType,
+                                                     Optional<String> filterBy, Optional<String> filterValue) {
+
+        TypedQuery<Booking> bookingSortedQuery = bookingCriteriaRepository.bookingSearchQuery(orderBy, orderType, filterBy, filterValue);
+
+        int bookingLength;
+        if (filterBy.isEmpty() && filterValue.isEmpty()) {
+            bookingLength = bookingRepository.findAll().size();
+        } else {
+            bookingLength = bookingSortedQuery.getResultList().size();
         }
-        return bookingDTOList;
+
+        bookingSortedQuery.setFirstResult(pageNumber * pageSize);
+        bookingSortedQuery.setMaxResults(pageSize);
+        List<Booking> bookingSortedList = bookingSortedQuery.getResultList();
+        List<BookingDTO> bookingDTOList = BookingMapper.INSTANCE.toDTOList(bookingSortedList);
+
+        return new BookingResponseDTO(bookingDTOList, bookingLength);
     }
 
     /**
