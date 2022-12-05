@@ -36,13 +36,28 @@ public class BookingCriteriaRepository {
         }
 
         if (filterBy.isPresent() && filterValue.isPresent() && !filterBy.get().equals("") && !filterValue.get().equals("")) {
-            // In case filtering by LocalDate is used.
+
+            // Filtering by LocalDate
             if (BookingDTO.class.getDeclaredField(filterBy.get()).getType().equals(LocalDate.class)) {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 LocalDate filterValueAsDate = LocalDate.parse(filterValue.get(), formatter);
-                bookingCriteriaQuery.select(root).where(cb.between(root.get(filterBy.get()), filterValueAsDate, LocalDate.now()));
 
-                // All other cases.
+                // For now, this filtering option only provides dates from present to the given date.
+                // In the future, it would be appropriate to filter a range between two dates.
+                bookingCriteriaQuery.select(root).where(cb.between(root.get(filterBy.get()), LocalDate.now(), filterValueAsDate));
+
+            // Filtering by int
+            } else if (BookingDTO.class.getDeclaredField(filterBy.get()).getType().equals(int.class)) {
+
+                // For now, this filtering option provides values from 0 to given value.
+                bookingCriteriaQuery.select(root).where(cb.between(root.get(filterBy.get()), 0, Integer.parseInt(filterValue.get())));
+
+            // Filtering by boolean
+            } else if (BookingDTO.class.getDeclaredField(filterBy.get()).getType().equals(boolean.class)) {
+                boolean filterValueAsBoolean = Boolean.parseBoolean(filterValue.get());
+                bookingCriteriaQuery.select(root).where(cb.equal(root.get(filterBy.get()), filterValueAsBoolean));
+
+            // Filtering by string
             } else {
                 bookingCriteriaQuery.select(root).where(cb.like(cb.lower(root.get(filterBy.get())), filterValue.get().toLowerCase() + '%'));
             }
