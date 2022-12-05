@@ -34,24 +34,10 @@ public class RoomService {
 
     public List<RoomDTO> getAllRooms(int pageNumber, int pageSize, String orderBy,
                                      Optional<String> filterBy, Optional<String> filterValue) {
-        List<Room> rooms = roomCriteriaRepository.roomSearch(pageNumber, pageSize, orderBy);
-        List<RoomDTO> roomDTOList = new ArrayList<>();
-        for (Room room : rooms) {
-            RoomDTO roomDTO = RoomMapper.INSTANCE.toDTO(room);
-            roomDTOList.add(roomDTO);
-        }
+        List<Room> rooms = roomCriteriaRepository.roomSearch(pageNumber, pageSize, orderBy, filterBy, filterValue);
+        List<RoomDTO> roomDTOList = RoomMapper.INSTANCE.toDTOList(rooms);
         return roomDTOList;
     }
-
-//    public List<RoomDTO> getAllRooms() {
-//        List<Room> rooms = roomRepository.findAll();
-//        List<RoomDTO> roomDTOList = new ArrayList<>();
-//        for (Room room : rooms) {
-//            RoomDTO roomDTO = RoomMapper.INSTANCE.toDTO(room);
-//            roomDTOList.add(roomDTO);
-//        }
-//        return roomDTOList;
-//    }
 
     public List<RoomDTO> getRoomsByType(String roomType) {
         return roomRepository.findRoomsByRoomType(RoomType.valueOf(roomType.toUpperCase())).stream()
