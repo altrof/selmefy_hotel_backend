@@ -7,16 +7,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import tech.selmefy.hotel.controller.booking.dto.BookingDTO;
 import tech.selmefy.hotel.controller.booking.dto.BookingResponseDTO;
-import tech.selmefy.hotel.controller.person.dto.PeopleResponseDTO;
-import tech.selmefy.hotel.controller.person.dto.PersonDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.mapper.BookingMapper;
-import tech.selmefy.hotel.mapper.PersonMapper;
 import tech.selmefy.hotel.repository.booking.Booking;
 import tech.selmefy.hotel.repository.booking.BookingCriteriaRepository;
 import tech.selmefy.hotel.repository.booking.BookingRepository;
 import tech.selmefy.hotel.repository.person.Person;
-import tech.selmefy.hotel.repository.person.PersonCriteriaRepository;
 import tech.selmefy.hotel.repository.person.PersonRepository;
 import tech.selmefy.hotel.repository.personinbooking.PersonInBookingRepository;
 import tech.selmefy.hotel.repository.room.Room;
@@ -25,7 +21,6 @@ import tech.selmefy.hotel.repository.room.RoomRepository;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -132,9 +127,12 @@ public class BookingService {
 
         if (!isRoomAvailable(room, bookingDTO.getCheckInDate(), bookingDTO.getCheckOutDate(), originalBooking)) {
             logger.warn("Ran into exception that room is not available.");
-            logger.warn(String.format("Check-in : %s", bookingDTO.getCheckInDate()));
-            logger.warn(String.format("Check-out : %s", bookingDTO.getCheckOutDate()));
-            logger.warn(String.format("Room : %s", room.getId()));
+            LocalDate checkInDate = bookingDTO.getCheckInDate();
+            LocalDate checkOutDate = bookingDTO.getCheckOutDate();
+            Long roomId = room.getId();
+            logger.warn("Check-in : {}", checkInDate);
+            logger.warn("Check-out : {}", checkOutDate);
+            logger.warn("Room : {}", roomId);
             throw new ApiRequestException("Room is not available at the provided dates!");
         }
     }
@@ -145,26 +143,26 @@ public class BookingService {
     }
     private boolean isRoomAvailable(Room room, LocalDate fromDate, LocalDate toDate, Optional<Booking> bookingUpdate) {
         if (room.getRoomAvailableForBooking().equals(Boolean.FALSE)) {
-            logger.info(String.format("Returned false due to room %s not being available for booking.", room.getId()));
+            logger.info("Returned false due to room {} not being available for booking.", room.getId());
             return false;
         } else {
             List<Booking> bookings = bookingRepository.findAll().stream()
-                .filter(booking -> booking.getRoomId() == room.getId()).collect(Collectors.toList());
+                .filter(booking -> booking.getRoomId().equals(room.getId())).toList();
             bookingUpdate.ifPresent(bookings::remove);
             for (Booking booking : bookings) {
-                logger.info(String.format("Requested room id: %s, booking room id: %s", room.getId(), booking.getRoomId()));
-                logger.info(String.format("Comparing existing bookings to requested dates"));
-                logger.info(String.format("Requested start date: %s, date in booking: %s", fromDate, booking.getCheckInDate()));
-                logger.info(String.format("Requested end date: %s, date in booking: %s", toDate, booking.getCheckOutDate()));
+                logger.info("Requested room id: {}, booking room id: {}", room.getId(), booking.getRoomId());
+                logger.info("Comparing existing bookings to requested dates");
+                logger.info("Requested start date: {}, date in booking: {}", fromDate, booking.getCheckInDate());
+                logger.info("Requested end date: {}, date in booking: {}", toDate, booking.getCheckOutDate());
                 if (fromDate.isBefore(booking.getCheckInDate())) {
                     if (toDate.isAfter(booking.getCheckInDate())) {
-                        logger.info(String.format("Returned false case 1."));
+                        logger.info("Returned false case 1.");
                         return false;
                         }
                     }
                 else if (fromDate.isBefore(booking.getCheckOutDate())) {
                     if (toDate.isAfter(booking.getCheckInDate()) || toDate.isAfter(booking.getCheckOutDate())) {
-                        logger.info(String.format("Returned false case 2."));
+                        logger.info("Returned false case 2.");
                         return false;
                         }
                     }

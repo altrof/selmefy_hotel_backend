@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Repository;
 import tech.selmefy.hotel.controller.booking.dto.BookingDTO;
-import tech.selmefy.hotel.controller.person.dto.PersonDTO;
-
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
