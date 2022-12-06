@@ -1,15 +1,16 @@
 package tech.selmefy.hotel.controller.auth.dto.request;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Set;
 
 @Data
+@Builder
 public class SignupRequestDTO {
     @NotBlank
     @Size(min = 3, max = 20)
@@ -38,7 +39,6 @@ public class SignupRequestDTO {
     @NotBlank
     private String country;
 
-    @Past
     private LocalDate dateOfBirth;
 
     private String phoneNumber;
