@@ -55,7 +55,8 @@ class RoomControllerTest {
         roomDTOList.add(room2);
         roomDTOList.add(room3);
         roomDTOList.add(room4);
-        BDDMockito.given(roomService.getAllRoomsWithParams(0,10,"id", "ASC", Optional.empty(), Optional.empty())).willReturn((RoomResponseDTO) roomDTOList);
+        RoomResponseDTO roomResponseDTO = new RoomResponseDTO(roomDTOList, 4);
+        BDDMockito.given(roomService.getAllRoomsWithParams(0,10,"id", "ASC", Optional.empty(), Optional.empty())).willReturn((RoomResponseDTO) roomResponseDTO);
 
         // when
         RoomResponseDTO result = roomController.getAllRooms(0,10, "id", "ASC",Optional.empty(), Optional.empty());
