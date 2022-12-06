@@ -10,5 +10,5 @@
 		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
 
     <include file="db/changelog/db.changelog-master.xml"/>
-    <includeAll path="db/test-changelog/changes"/>
+<!--    <includeAll path="db/test-changelog/test-data"/>-->
 </databaseChangeLog>
