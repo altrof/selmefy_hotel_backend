@@ -84,16 +84,6 @@ class PersonServiceTest {
 
     @Test
     void createNewPerson() {
-        /*//given
-        given(personService.createNewPerson(personDTO2)).willReturn(null);
-        //when
-
-        var result = personService.createNewPerson(personDTO2);
-        //then
-        //then(personRepository).should().save()
-        //if you put null instead of long gives another error
-        assertEquals(2L, result);*/
-
     }
 
     @Test
