@@ -9,6 +9,7 @@ import tech.selmefy.hotel.service.room.type.RoomType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -22,14 +23,20 @@ public class RoomCriteriaRepository {
 
     private final EntityManager entityManager;
     @SneakyThrows
-    public List<Room> roomSearch(int pageNumber, int pageSize, String orderBy,
-                           Optional<String> filterBy, Optional<String> filterValue) {
+    public TypedQuery<Room> roomSearchQuery(String orderBy, String orderType,
+                                 Optional<String> filterBy, Optional<String> filterValue) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Room> roomCriteriaQuery = cb.createQuery(Room.class);
         Root<Room> root = roomCriteriaQuery.from(Room.class);
         roomCriteriaQuery.select(root);
-        roomCriteriaQuery.orderBy(cb.asc(root.get(orderBy)));
+
+        if(orderType.equals("DESC")) {
+            roomCriteriaQuery.orderBy(cb.desc(root.get(orderBy)));
+        } else {
+            roomCriteriaQuery.orderBy(cb.asc(root.get(orderBy)));
+        }
+
         if (filterBy.isPresent() && filterValue.isPresent()) {
             // currently if boolean true, then returns all available, if false or anything else will return all unvailable rooms
             if(RoomDTO.class.getDeclaredField(filterBy.get()).getType().equals(Boolean.class)) {
@@ -50,11 +57,11 @@ public class RoomCriteriaRepository {
                 roomCriteriaQuery.select(root).where(cb.lessThan(root.get(filterBy.get()), filterValueAsInt));
             }
         }
-        Query query = entityManager.createQuery(roomCriteriaQuery);
-        query.setFirstResult(pageNumber * pageSize);
-        query.setMaxResults(pageSize);
+//        Query query = entityManager.createQuery(roomCriteriaQuery);
+//        query.setFirstResult(pageNumber * pageSize);
+//        query.setMaxResults(pageSize);
 
-        return query.getResultList();
+        return entityManager.createQuery(roomCriteriaQuery);
 
     }
 }

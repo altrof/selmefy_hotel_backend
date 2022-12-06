@@ -9,13 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.FluentQuery;
-import tech.selmefy.hotel.controller.room.RoomController;
 import tech.selmefy.hotel.controller.room.dto.RoomDTO;
+import tech.selmefy.hotel.controller.room.dto.RoomResponseDTO;
 import tech.selmefy.hotel.mapper.RoomMapper;
 import tech.selmefy.hotel.repository.room.Room;
 import tech.selmefy.hotel.repository.room.RoomRepository;
@@ -25,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -68,13 +62,14 @@ class RoomServiceTest {
         BDDMockito.given(roomRepository.findAll()).willReturn(roomList);
 
         // when
-        List<RoomDTO> result = roomService.getAllRooms(0,10, "id", Optional.empty(), Optional.empty());
+
+        RoomResponseDTO result = roomService.getAllRoomsWithParams(0,10, "id", "ASC", Optional.empty(), Optional.empty());
 
         // then
-        assertEquals(roomList.size(), result.size());
+        assertEquals(roomList.size(), result.getTotalRoomsLength());
 
         // Confirming all rooms are here
-        for (RoomDTO roomDTO : result) {
+        for (RoomDTO roomDTO : result.getRooms()) {
             assertTrue(roomIdList.contains(roomDTO.getId()));
         }
     }
