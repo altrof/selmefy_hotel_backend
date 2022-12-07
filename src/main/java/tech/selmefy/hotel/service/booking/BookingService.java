@@ -2,11 +2,15 @@ package tech.selmefy.hotel.service.booking;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import tech.selmefy.hotel.controller.booking.dto.BookingDTO;
+import tech.selmefy.hotel.controller.booking.dto.BookingResponseDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.mapper.BookingMapper;
 import tech.selmefy.hotel.repository.booking.Booking;
+import tech.selmefy.hotel.repository.booking.BookingCriteriaRepository;
 import tech.selmefy.hotel.repository.booking.BookingRepository;
 import tech.selmefy.hotel.repository.person.Person;
 import tech.selmefy.hotel.repository.person.PersonRepository;
@@ -14,32 +18,47 @@ import tech.selmefy.hotel.repository.personinbooking.PersonInBookingRepository;
 import tech.selmefy.hotel.repository.room.Room;
 import tech.selmefy.hotel.repository.room.RoomRepository;
 
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class BookingService {
-
+        private static final Logger logger = LoggerFactory.getLogger(BookingService.class);
         public final BookingRepository bookingRepository;
         public final PersonRepository personRepository;
         public final RoomRepository roomRepository;
-
         public final PersonInBookingRepository personInBookingRepository;
+
+        public final BookingCriteriaRepository bookingCriteriaRepository;
 
 
     public List<BookingDTO> getAllBookings() {
-        List<Booking> bookings = bookingRepository.findAll();
-        List<BookingDTO> bookingDTOList = new ArrayList<>();
-        for (Booking booking : bookings) {
-            BookingDTO bookingDTO = BookingMapper.INSTANCE.toDTO(booking);
-            bookingDTOList.add(bookingDTO);
+        return bookingRepository.findAll().stream().map(BookingMapper.INSTANCE::toDTO).toList();
+    }
+
+    public BookingResponseDTO getAllBookingsWithParams(int pageNumber, int pageSize, String orderBy, String orderType,
+                                                     Optional<String> filterBy, Optional<String> filterValue) {
+
+        TypedQuery<Booking> bookingSortedQuery = bookingCriteriaRepository.bookingSearchQuery(orderBy, orderType, filterBy, filterValue);
+
+        int bookingLength;
+        if (filterBy.isEmpty() && filterValue.isEmpty()) {
+            bookingLength = bookingRepository.findAll().size();
+        } else {
+            bookingLength = bookingSortedQuery.getResultList().size();
         }
-        return bookingDTOList;
+
+        bookingSortedQuery.setFirstResult(pageNumber * pageSize);
+        bookingSortedQuery.setMaxResults(pageSize);
+        List<Booking> bookingSortedList = bookingSortedQuery.getResultList();
+        List<BookingDTO> bookingDTOList = BookingMapper.INSTANCE.toDTOList(bookingSortedList);
+
+        return new BookingResponseDTO(bookingDTOList, bookingLength);
     }
 
     /**
@@ -107,6 +126,13 @@ public class BookingService {
         }
 
         if (!isRoomAvailable(room, bookingDTO.getCheckInDate(), bookingDTO.getCheckOutDate(), originalBooking)) {
+            logger.warn("Ran into exception that room is not available.");
+            LocalDate checkInDate = bookingDTO.getCheckInDate();
+            LocalDate checkOutDate = bookingDTO.getCheckOutDate();
+            Long roomId = room.getId();
+            logger.warn("Check-in : {}", checkInDate);
+            logger.warn("Check-out : {}", checkOutDate);
+            logger.warn("Room : {}", roomId);
             throw new ApiRequestException("Room is not available at the provided dates!");
         }
     }
@@ -117,22 +143,31 @@ public class BookingService {
     }
     private boolean isRoomAvailable(Room room, LocalDate fromDate, LocalDate toDate, Optional<Booking> bookingUpdate) {
         if (room.getRoomAvailableForBooking().equals(Boolean.FALSE)) {
+            logger.info("Returned false due to room {} not being available for booking.", room.getId());
             return false;
         } else {
-            List<Booking> bookings = bookingRepository.findAll();
+            List<Booking> bookings = bookingRepository.findAll().stream()
+                .filter(booking -> booking.getRoomId().equals(room.getId())).toList();
             bookingUpdate.ifPresent(bookings::remove);
             for (Booking booking : bookings) {
-                if (
-                    (Objects.equals(booking.getRoomId(), room.getId()))
-                    &&
-                        (fromDate.isBefore(booking.getCheckInDate())
-                        && toDate.isAfter(booking.getCheckInDate()))
-                        ||
-                        (fromDate.isBefore(booking.getCheckOutDate()))) {
-                    return false;
+                logger.info("Requested room id: {}, booking room id: {}", room.getId(), booking.getRoomId());
+                logger.info("Comparing existing bookings to requested dates");
+                logger.info("Requested start date: {}, date in booking: {}", fromDate, booking.getCheckInDate());
+                logger.info("Requested end date: {}, date in booking: {}", toDate, booking.getCheckOutDate());
+                if (fromDate.isBefore(booking.getCheckInDate())) {
+                    if (toDate.isAfter(booking.getCheckInDate())) {
+                        logger.info("Returned false case 1.");
+                        return false;
+                        }
+                    }
+                else if (fromDate.isBefore(booking.getCheckOutDate())) {
+                    if (toDate.isAfter(booking.getCheckInDate()) || toDate.isAfter(booking.getCheckOutDate())) {
+                        logger.info("Returned false case 2.");
+                        return false;
+                        }
+                    }
                 }
             }
-        }
         return true;
     }
 

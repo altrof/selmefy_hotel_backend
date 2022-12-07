@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.context.Context;
 import tech.selmefy.hotel.controller.auth.dto.request.LoginRequestDTO;
 import tech.selmefy.hotel.controller.auth.dto.request.SignupRequestDTO;
 import tech.selmefy.hotel.controller.auth.dto.response.JwtResponseDTO;
@@ -28,6 +29,7 @@ import tech.selmefy.hotel.utils.email_sender.EmailSender;
 import tech.selmefy.hotel.validators.EmailValidator;
 import tech.selmefy.hotel.service.person.PersonService;
 import tech.selmefy.hotel.service.user_account.UserAccountService;
+import static tech.selmefy.hotel.validators.ObjectUtilityValidator.isNullOrEmpty;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,7 +37,6 @@ import java.time.Period;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -87,7 +88,7 @@ public class AuthService {
 
         LocalDateTime expiresAt = confirmationToken.getExpiresAt();
 
-        if (expiresAt.isBefore(LocalDateTime.now())) {
+        if (expiresAt.isBefore(appUtil.getCurrentLocalDateTime())) {
             throw new IllegalStateException("Token is expired");
         }
 
@@ -98,6 +99,63 @@ public class AuthService {
     }
 
     public ResponseEntity<Object> registerUser(SignupRequestDTO signupRequest) {
+
+        // Username is cant be null
+        if (isNullOrEmpty(signupRequest.getUsername())) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Username is required.");
+        }
+
+        // Password is cant be null
+        if (isNullOrEmpty(signupRequest.getPassword())) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Password is required.");
+        }
+
+        // Email is cant be null
+        if (isNullOrEmpty(signupRequest.getEmail())) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Email is required.");
+        }
+
+        // Identity code is cant be null
+        if (isNullOrEmpty(signupRequest.getIdentityCode())) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Identity code is required.");
+        }
+
+        // Firstname is cant be null
+        if (isNullOrEmpty(signupRequest.getFirstName())) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Firstname is required.");
+        }
+
+        // Lastname is cant be null
+        if (isNullOrEmpty(signupRequest.getLastName())) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Lastname is required.");
+        }
+
+        // Country is cant be null
+        if (isNullOrEmpty(signupRequest.getCountry())) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Country is required.");
+        }
+
+        // Phone number is cant be null
+        if (isNullOrEmpty(signupRequest.getPhoneNumber())) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Phone number is required.");
+        }
+
         if (userAccountRepository.existsByIdentityCode(signupRequest.getIdentityCode())) {
             return ResponseEntity
                 .badRequest()
@@ -116,16 +174,32 @@ public class AuthService {
                 .body("Error: Email is already in use!");
         }
 
+        // Email validation with regex pattern
         if (!emailValidator.test(signupRequest.getEmail())) {
             return ResponseEntity
                 .badRequest()
-                .body("Error: Email is not valid");
+                .body("Error: Email is not valid.");
         }
 
-        if(Period.between(signupRequest.getDateOfBirth(), LocalDate.now()).getYears() < 18) {
+        // Validation for date of birt. 18+
+        if (Period.between(signupRequest.getDateOfBirth(), LocalDate.now()).getYears() < 18) {
             return ResponseEntity
                 .badRequest()
                 .body("Error: You are less than 18 years old.");
+        }
+
+        // User length should be not less than 6 chars
+        if (signupRequest.getUsername().length() < 6) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Username minimum length is 6.");
+        }
+
+        // Password length should be not less than 6 chars
+        if (signupRequest.getPassword().length() < 6) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Password minimum length is 6.");
         }
 
         Long personId;
@@ -187,7 +261,7 @@ public class AuthService {
         userAccount.setRoles(userAccountRoles);
         userAccountRepository.save(userAccount);
 
-        String token = UUID.randomUUID().toString();
+        String token = appUtil.getUuidString();
         EmailConfirmationToken confirmationToken = new EmailConfirmationToken(
             token,
             LocalDateTime.now(),
@@ -198,81 +272,18 @@ public class AuthService {
         emailConfirmationTokenService.saveEmailConfirmationToken(confirmationToken);
 
         String link = appUtil.getClientBaseUrl() + "/confirm?token=" + token;
-        emailSender.send(
+
+        final Context ctx = new Context();
+        ctx.setVariable("name", signupRequest.getFirstName());
+        ctx.setVariable("confirmationUrl", link);
+
+        emailSender.sendHtmlMessage(
             signupRequest.getEmail(),
-            buildEmailMessage(signupRequest.getFirstName(), link)
+            "/html/email_confirm.html",
+            ctx
         );
 
         return ResponseEntity.ok(token);
-    }
-
-    private String buildEmailMessage(String name, String link) {
-        return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
-            "\n" +
-            "<span style=\"display:none;font-size:1px;color:#fff;max-height:0\"></span>\n" +
-            "\n" +
-            "  <table role=\"presentation\" width=\"100%\" style=\"border-collapse:collapse;min-width:100%;width:100%!important\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n" +
-            "    <tbody><tr>\n" +
-            "      <td width=\"100%\" height=\"53\" bgcolor=\"#0b0c0c\">\n" +
-            "        \n" +
-            "        <table role=\"presentation\" width=\"100%\" style=\"border-collapse:collapse;max-width:580px\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" align=\"center\">\n" +
-            "          <tbody><tr>\n" +
-            "            <td width=\"70\" bgcolor=\"#0b0c0c\" valign=\"middle\">\n" +
-            "                <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse\">\n" +
-            "                  <tbody><tr>\n" +
-            "                    <td style=\"padding-left:10px\">\n" +
-            "                  \n" +
-            "                    </td>\n" +
-            "                    <td style=\"font-size:28px;line-height:1.315789474;Margin-top:4px;padding-left:10px\">\n" +
-            "                      <span style=\"font-family:Helvetica,Arial,sans-serif;font-weight:700;color:#ffffff;text-decoration:none;vertical-align:top;display:inline-block\">Confirm your email</span>\n" +
-            "                    </td>\n" +
-            "                  </tr>\n" +
-            "                </tbody></table>\n" +
-            "              </a>\n" +
-            "            </td>\n" +
-            "          </tr>\n" +
-            "        </tbody></table>\n" +
-            "        \n" +
-            "      </td>\n" +
-            "    </tr>\n" +
-            "  </tbody></table>\n" +
-            "  <table role=\"presentation\" class=\"m_-6186904992287805515content\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse;max-width:580px;width:100%!important\" width=\"100%\">\n" +
-            "    <tbody><tr>\n" +
-            "      <td width=\"10\" height=\"10\" valign=\"middle\"></td>\n" +
-            "      <td>\n" +
-            "        \n" +
-            "                <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse\">\n" +
-            "                  <tbody><tr>\n" +
-            "                    <td bgcolor=\"#1D70B8\" width=\"100%\" height=\"10\"></td>\n" +
-            "                  </tr>\n" +
-            "                </tbody></table>\n" +
-            "        \n" +
-            "      </td>\n" +
-            "      <td width=\"10\" valign=\"middle\" height=\"10\"></td>\n" +
-            "    </tr>\n" +
-            "  </tbody></table>\n" +
-            "\n" +
-            "\n" +
-            "\n" +
-            "  <table role=\"presentation\" class=\"m_-6186904992287805515content\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse;max-width:580px;width:100%!important\" width=\"100%\">\n" +
-            "    <tbody><tr>\n" +
-            "      <td height=\"30\"><br></td>\n" +
-            "    </tr>\n" +
-            "    <tr>\n" +
-            "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
-            "      <td style=\"font-family:Helvetica,Arial,sans-serif;font-size:19px;line-height:1.315789474;max-width:560px\">\n" +
-            "        \n" +
-            "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Hi " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Thank you for registering. Please click on the below link to activate your account: </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a href=\"" + link + "\">Activate Now</a> </p></blockquote>\n Link will expire in 15 minutes. <p>See you soon</p>" +
-            "        \n" +
-            "      </td>\n" +
-            "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
-            "    </tr>\n" +
-            "    <tr>\n" +
-            "      <td height=\"30\"><br></td>\n" +
-            "    </tr>\n" +
-            "  </tbody></table><div class=\"yj6qo\"></div><div class=\"adL\">\n" +
-            "\n" +
-            "</div></div>";
     }
 
 }

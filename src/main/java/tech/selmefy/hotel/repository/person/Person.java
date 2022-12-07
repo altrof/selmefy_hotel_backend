@@ -1,6 +1,7 @@
 package tech.selmefy.hotel.repository.person;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -23,6 +24,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Person implements Serializable {
     /*
     We need to implement Serializable for Person because non-PK column identityCode is used as foreign key elsewhere.
