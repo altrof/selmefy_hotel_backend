@@ -76,7 +76,7 @@ public class PersonService {
 
     public PersonDTO updatePerson(Long personId, PersonDTO personDTO) {
         Person person = personRepository.findById(personId).orElseThrow(
-                () -> new ApiRequestException("Booking does not exist with id: " + personId));
+                () -> new ApiRequestException("Person does not exist with id: " + personId));
 
         if(isNullOrEmpty(personDTO.getFirstName()) || isNullOrEmpty(personDTO.getLastName())) {
             throw new ApiRequestException("Firstname or lastname can not to be null.");
