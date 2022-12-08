@@ -1,36 +1,52 @@
 package tech.selmefy.hotel.service.person;
 
+import liquibase.pro.packaged.M;
+import org.hibernate.query.internal.QueryImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import tech.selmefy.hotel.controller.person.dto.PeopleResponseDTO;
 import tech.selmefy.hotel.controller.person.dto.PersonDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.mapper.PersonMapper;
 import tech.selmefy.hotel.mapper.PersonMapperImpl;
 import tech.selmefy.hotel.repository.person.Person;
+import tech.selmefy.hotel.repository.person.PersonCriteriaRepository;
 import tech.selmefy.hotel.repository.person.PersonRepository;
 
+import javax.management.Query;
+import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PersonServiceTest {
     @Mock
+    private TypedQuery<Person> typedQuery;
+
+    @Mock
+    private EntityManager entityManager;
+
+    @Mock
     private PersonRepository personRepository;
+
+    @Mock
+    private PersonCriteriaRepository personCriteriaRepository;
 
     @Spy
     private final PersonMapper personMapper = new PersonMapperImpl();
@@ -197,7 +213,32 @@ class PersonServiceTest {
 
     @Test
     void createNewPerson_returnId_WhenPersonSuccessfullyCreated() {
+        /*PersonDTO personDTO = PersonDTO.builder()
+                .identityCode("12345678")
+                .dateOfBirth (LocalDate.of(1996, 8, 17))
+                .firstName("Aleksandr")
+                .lastName("Trofimov")
+                .country("Estonia")
+                .phoneNumber ("+37255555555")
+                .build();
+
+
+        Person person = Person.builder()
+                .id(1L)
+                .identityCode("12345678")
+                .dateOfBirth (LocalDate.of(1996, 8, 17))
+                .firstName("Aleksandr")
+                .lastName("Trofimov")
+                .country("Estonia")
+                .phoneNumber("+37255555555")
+                .build();
+
+
+        when(personMapper.toEntity(personDTO)).thenReturn(person);
+        var actualResult = personService.createNewPerson(personDTO);
+        assertEquals(1L, actualResult);*/
     }
+
 
     @Test
     void getAllPeople_returnsPersonDtoList_WhenRequested() {
@@ -225,5 +266,32 @@ class PersonServiceTest {
         for (PersonDTO personDTO : result) {
             assertTrue(personIdList.contains(personDTO.getIdentityCode()));
         }
+    }
+
+    @Test
+    void getAllPeopleWithParams_returnsPeopleResponseDto_WhenRequested() {
+        /*Person person1 = new Person(1L,"1","john3","doe3","Estonia","555",LocalDate.of(2000, 10,5), new Timestamp(System.currentTimeMillis()));
+        Person person2 = new Person(2L,"2","john2","doe2","Estonia","555",LocalDate.of(2000, 10,5), new Timestamp(System.currentTimeMillis()));
+        Person person3 = new Person(3L,"3","john1","doe1","Estonia","555",LocalDate.of(2000, 10,5), new Timestamp(System.currentTimeMillis()));
+
+        //given
+        List<Person> personList = new ArrayList<>();
+        List<String> personIdList = Arrays.asList("1", "2", "3");
+        personList.add(person1);
+        personList.add(person2);
+        personList.add(person3);
+        //Optional.of("lastname")
+        given(personRepository.findAll()).willReturn(personList);
+        given(personCriteriaRepository.personSearchQuery("lastName","ASC", Optional.of("lastname"), Optional.<String>empty())).willReturn(typedQuery);
+        PeopleResponseDTO result = personService.getAllPeopleWithParams(0,10,"lastName","ASC",Optional.of("lastname"), Optional.<String>empty());
+        System.out.println();
+
+        then(personCriteriaRepository).should().personSearchQuery("lastName","ASC", Optional.of("lastname"), Optional.<String>empty());
+        System.out.println(result.getPeople());
+        assertEquals(personList.size(), result.getTotalPeopleLength());
+
+        for (PersonDTO personDTO : result.getPeople()) {
+            assertTrue(personIdList.contains(personDTO.getIdentityCode()));
+        }*/
     }
 }
