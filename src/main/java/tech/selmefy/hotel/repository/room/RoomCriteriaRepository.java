@@ -8,12 +8,10 @@ import tech.selmefy.hotel.controller.room.dto.RoomDTO;
 import tech.selmefy.hotel.service.room.type.RoomType;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -57,9 +55,6 @@ public class RoomCriteriaRepository {
                 roomCriteriaQuery.select(root).where(cb.lessThan(root.get(filterBy.get()), filterValueAsInt));
             }
         }
-//        Query query = entityManager.createQuery(roomCriteriaQuery);
-//        query.setFirstResult(pageNumber * pageSize);
-//        query.setMaxResults(pageSize);
 
         return entityManager.createQuery(roomCriteriaQuery);
 
