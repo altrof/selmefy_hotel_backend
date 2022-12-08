@@ -32,4 +32,5 @@
             CREATE EXTENSION pgcrypto;
         </sql>
     </changeSet>
+    
 </databaseChangeLog>
