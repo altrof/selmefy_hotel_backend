@@ -47,29 +47,4 @@
             );
         </sql>
     </changeSet>
-
-    <changeSet id="HOT-34-refactor-existing-liquibase-files_4" author="Norman">
-        <sql dbms="postgresql"
-             splitStatements="true">
-            INSERT INTO hotel (hotel_name) VALUES ('selmefy deluxe');
-        </sql>
-    </changeSet>
-
-    <changeSet id="HOT-34-refactor-existing-liquibase-files_5" author="Norman">
-        <sql dbms="postgresql"
-             splitStatements="true">
-            INSERT INTO hotel_floor (hotel_id)
-            SELECT id FROM hotel WHERE hotel_name='selmefy deluxe';
-        </sql>
-    </changeSet>
-
-    <changeSet id="HOT-34-refactor-existing-liquibase-files_6" author="Norman">
-        <sql dbms="postgresql"
-             splitStatements="true">
-            INSERT INTO room (size, number_of_beds, floor_id, room_number)
-            SELECT 5.0, 2, hotel_floor.id, 1
-            FROM hotel_floor, hotel
-            WHERE hotel.hotel_name='selmefy deluxe' AND hotel.id=hotel_floor.hotel_id;
-        </sql>
-    </changeSet>
 </databaseChangeLog>
