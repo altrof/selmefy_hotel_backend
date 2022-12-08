@@ -25,23 +25,4 @@
         </sql>
     </changeSet>
 
-    <changeSet id="HOT-46-Add-hotel-service-order-to-database-2" author="Rivo">
-        <sql dbms="postgresql">
-            INSERT INTO hotel_service_order
-            (service_type, person_id, order_time, price, comments)
-            SELECT hotel_service.id, person.identity_code, '2022-12-26', 20, 'Parking'
-            FROM person, hotel_service
-            WHERE person.identity_code='49601111234' AND hotel_service.id='2'
-        </sql>
-    </changeSet>
-
-    <changeSet id="HOT-46-Add-hotel-service-order-to-database-3" author="Rivo">
-        <sql dbms="postgresql">
-            INSERT INTO hotel_service_order
-            (service_type, person_id, order_time, price, comments)
-            SELECT hotel_service.id, person.identity_code, '2022-12-30', 30, 'Restaurant'
-            FROM person, hotel_service
-            WHERE person.identity_code='38610211234' AND hotel_service.id='8'
-        </sql>
-    </changeSet>
 </databaseChangeLog>
