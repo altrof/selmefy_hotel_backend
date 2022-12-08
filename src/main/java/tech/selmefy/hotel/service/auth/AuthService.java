@@ -37,7 +37,6 @@ import java.time.Period;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -89,7 +88,7 @@ public class AuthService {
 
         LocalDateTime expiresAt = confirmationToken.getExpiresAt();
 
-        if (expiresAt.isBefore(LocalDateTime.now())) {
+        if (expiresAt.isBefore(appUtil.getCurrentLocalDateTime())) {
             throw new IllegalStateException("Token is expired");
         }
 
@@ -113,6 +112,13 @@ public class AuthService {
             return ResponseEntity
                 .badRequest()
                 .body("Error: Password is required.");
+        }
+
+        // Email is cant be null
+        if (isNullOrEmpty(signupRequest.getEmail())) {
+            return ResponseEntity
+                .badRequest()
+                .body("Error: Email is required.");
         }
 
         // Identity code is cant be null
@@ -172,7 +178,7 @@ public class AuthService {
         if (!emailValidator.test(signupRequest.getEmail())) {
             return ResponseEntity
                 .badRequest()
-                .body("Error: Email is not valid");
+                .body("Error: Email is not valid.");
         }
 
         // Validation for date of birt. 18+
@@ -189,11 +195,11 @@ public class AuthService {
                 .body("Error: Username minimum length is 6.");
         }
 
-        // User length should be not less than 6 chars
+        // Password length should be not less than 6 chars
         if (signupRequest.getPassword().length() < 6) {
             return ResponseEntity
                 .badRequest()
-                .body("Error: Username minimum length is 6.");
+                .body("Error: Password minimum length is 6.");
         }
 
         Long personId;
@@ -255,7 +261,7 @@ public class AuthService {
         userAccount.setRoles(userAccountRoles);
         userAccountRepository.save(userAccount);
 
-        String token = UUID.randomUUID().toString();
+        String token = appUtil.getUuidString();
         EmailConfirmationToken confirmationToken = new EmailConfirmationToken(
             token,
             LocalDateTime.now(),

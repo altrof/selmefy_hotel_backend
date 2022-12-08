@@ -1,5 +1,7 @@
 package tech.selmefy.hotel.repository.auth;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -20,7 +22,9 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
+@AllArgsConstructor
 @Entity
+@Builder
 public class EmailConfirmationToken {
 
     @Id
