@@ -13,9 +13,11 @@ import tech.selmefy.hotel.controller.room.dto.RoomDTO;
 import tech.selmefy.hotel.controller.room.dto.RoomResponseDTO;
 import tech.selmefy.hotel.mapper.RoomMapper;
 import tech.selmefy.hotel.repository.room.Room;
+import tech.selmefy.hotel.repository.room.RoomCriteriaRepository;
 import tech.selmefy.hotel.repository.room.RoomRepository;
 import tech.selmefy.hotel.service.room.type.RoomType;
 
+import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,6 +38,12 @@ class RoomServiceTest {
     @Mock
     private RoomRepository roomRepository;
 
+    @Mock
+    private RoomCriteriaRepository roomCriteriaRepository;
+
+    @Mock
+    private TypedQuery<Room> typedQuery;
+
     @Spy
     private RoomMapper roomMapper;
 
@@ -51,28 +59,33 @@ class RoomServiceTest {
         roomList.clear();
     }
     //TODO repair this test
-//    @Test
-//    void getAllRooms() {
-//
-//        // given
-//        roomList.add(room1);
-//        roomList.add(room2);
-//        roomList.add(room3);
-//        roomList.add(room4);
-//        BDDMockito.given(roomRepository.findAll()).willReturn(roomList);
-//
-//        // when
-//
-//        RoomResponseDTO result = roomService.getAllRoomsWithParams(0,10, "id", "ASC", Optional.empty(), Optional.empty());
-//
-//        // then
-//        assertEquals(roomList.size(), result.getTotalRoomsLength());
-//
-//        // Confirming all rooms are here
-//        for (RoomDTO roomDTO : result.getRooms()) {
-//            assertTrue(roomIdList.contains(roomDTO.getId()));
-//        }
-//    }
+    @Test
+    void getAllRooms() {
+
+        // given
+        roomList.add(room1);
+        roomList.add(room2);
+        roomList.add(room3);
+        roomList.add(room4);
+        BDDMockito.given(roomRepository.findAll()).willReturn(roomList);
+
+        BDDMockito.given(typedQuery.getResultList()).willReturn(roomList);
+
+        BDDMockito.given(roomCriteriaRepository.roomSearchQuery("id", "ASC", Optional.empty(), Optional.empty()))
+            .willReturn(typedQuery);
+
+        // when
+
+        RoomResponseDTO result = roomService.getAllRoomsWithParams(0,10, "id", "ASC", Optional.empty(), Optional.empty());
+
+        // then
+        assertEquals(roomList.size(), result.getTotalRoomsLength());
+
+        // Confirming all rooms are here
+        for (RoomDTO roomDTO : result.getRooms()) {
+            assertTrue(roomIdList.contains(roomDTO.getId()));
+        }
+    }
 
     @Test
     void getRoomsByType() {
