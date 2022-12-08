@@ -83,6 +83,7 @@ public class RoomService {
             throw new IllegalArgumentException("At least one adult needs to be present");
         }
         Map<Long, Room> rooms = roomRepository.findAll().stream()
+            .filter(Room::getRoomAvailableForBooking)
             .filter(room -> doesRoomTypeMatch(room, roomType))
             .filter(room -> room.getNumberOfBeds() >= adults + children)
             .collect(Collectors.toMap(Room::getId, Function.identity()));
