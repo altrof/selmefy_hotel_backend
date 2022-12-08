@@ -32,27 +32,4 @@
             CREATE EXTENSION pgcrypto;
         </sql>
     </changeSet>
-
-    <changeSet id="HOT-44-add-user_account-table-to-database_3" author="Norman">
-        <sql dbms="postgresql">
-            INSERT INTO user_account
-            (person_id, person_identity_code, e_mail, account_user_name, password, is_client, is_employee)
-            SELECT person.id, person.identity_code, 'myemail@email.something', 'sibul',
-            crypt('salajane', gen_salt('bf')), -- See https://x-team.com/blog/storing-secure-passwords-with-postgresql/
-            false, true
-            FROM person WHERE person.identity_code='37507312222';
-        </sql>
-    </changeSet>
-
-    <changeSet id="HOT-44-add-user_account-table-to-database_4" author="Norman">
-        <sql dbms="postgresql">
-            INSERT INTO user_account
-            (person_id, person_identity_code, e_mail, account_user_name, password, is_client, is_employee)
-            SELECT person.id, person.identity_code, 'mari@blablabla.yahoo', 'marimaja',
-            crypt('123!password', gen_salt('bf')), -- See https://x-team.com/blog/storing-secure-passwords-with-postgresql/
-            true, false
-            FROM person WHERE person.identity_code='49601111234';
-        </sql>
-    </changeSet>
-
 </databaseChangeLog>
