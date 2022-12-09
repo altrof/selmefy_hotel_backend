@@ -34,7 +34,7 @@ class UserAccountServiceITest extends AbstractIntegrationTest {
         userAccountService.enableUserAccount("test@selmefy.tech");
 
         mvc.perform(get("/users"))
-            .andExpect(jsonPath("$[2].identityCode", is("111111111")))
-            .andExpect(jsonPath("$[2].enabled", is(true)));
+            .andExpect(jsonPath("$[0].identityCode", is("111111111")))
+            .andExpect(jsonPath("$[0].enabled", is(true)));
     }
 }
