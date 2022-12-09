@@ -10,6 +10,8 @@ import tech.selmefy.hotel.repository.person.Person;
 import tech.selmefy.hotel.repository.person.PersonCriteriaRepository;
 import tech.selmefy.hotel.repository.person.PersonRepository;
 import org.springframework.lang.NonNull;
+
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.TypedQuery;
@@ -60,6 +62,7 @@ public class PersonService {
         }
 
         Person person = PersonMapper.INSTANCE.toEntity(personDTO);
+        person.setTimeOfRegistration(new Timestamp(System.currentTimeMillis()));
         personRepository.save(person);
         return person.getId();
     }
