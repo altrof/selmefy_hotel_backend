@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+        <changeSet id="HOT-34-refactor-existing-liquibase-files_4" author="Norman">
+            <sql dbms="postgresql"
+                 splitStatements="true">
+                INSERT INTO hotel (hotel_name) VALUES ('selmefy deluxe');
+            </sql>
+        </changeSet>
+
+        <changeSet id="HOT-34-refactor-existing-liquibase-files_5" author="Norman">
+            <sql dbms="postgresql"
+                 splitStatements="true">
+                INSERT INTO hotel_floor (hotel_id)
+                SELECT id FROM hotel WHERE hotel_name='selmefy deluxe';
+            </sql>
+        </changeSet>
+
+        <changeSet id="HOT-34-refactor-existing-liquibase-files_6" author="Norman">
+            <sql dbms="postgresql"
+                 splitStatements="true">
+                INSERT INTO room (size, number_of_beds, floor_id, room_number)
+                SELECT 5.0, 2, hotel_floor.id, 1
+                FROM hotel_floor, hotel
+                WHERE hotel.hotel_name='selmefy deluxe' AND hotel.id=hotel_floor.hotel_id;
+            </sql>
+        </changeSet>
+
+
+    <changeSet id="HOT-36-add-person-table-to-liquibase_2" author="Norman">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            INSERT INTO person (identity_code, first_name, last_name, date_of_birth)
+            VALUES ('38610211234', 'Jaak', 'Sarv', '1986-10-21');
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-36-add-person-table-to-liquibase_3" author="Norman">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            INSERT INTO person (identity_code, first_name, last_name, date_of_birth)
+            VALUES ('49601111234', 'Mari', 'Maja', '1996-01-11');
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-36-add-person-table-to-liquibase_4" author="Norman">
+        <sql dbms="postgresql"
+             splitStatements="true">
+            INSERT INTO person (identity_code, first_name, last_name, date_of_birth)
+            VALUES ('37507312222', 'Karel', 'Sibul', '1975-07-31');
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="HOT-44-add-user_account-table-to-database_3" author="Norman">
+        <sql dbms="postgresql">
+            INSERT INTO user_account
+            (person_id, person_identity_code, e_mail, account_user_name, password, is_client, is_employee)
+            SELECT person.id, person.identity_code, 'myemail@email.something', 'sibul',
+            crypt('salajane', gen_salt('bf')), -- See https://x-team.com/blog/storing-secure-passwords-with-postgresql/
+            false, true
+            FROM person WHERE person.identity_code='37507312222';
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-44-add-user_account-table-to-database_4" author="Norman">
+        <sql dbms="postgresql">
+            INSERT INTO user_account
+            (person_id, person_identity_code, e_mail, account_user_name, password, is_client, is_employee)
+            SELECT person.id, person.identity_code, 'mari@blablabla.yahoo', 'marimaja',
+            crypt('123!password', gen_salt('bf')), -- See https://x-team.com/blog/storing-secure-passwords-with-postgresql/
+            true, false
+            FROM person WHERE person.identity_code='49601111234';
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="HOT-43-Add-booking-table-to-database_2" author="Anti">
+        <sql dbms="postgresql" splitStatements="true">
+            INSERT INTO booking
+            (room_id, person_id, person_identity_code, price, check_in_date, check_out_date, comments, late_check_out)
+            SELECT room.id, person.id, person.identity_code, 100, '2022-12-24', '2022-12-26', 'probably Santa', FALSE
+            FROM room, person
+            WHERE room.id=1 AND person.identity_code='37507312222'
+            ;
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-43-Add-booking-table-to-database_3" author="Anti">
+        <sql dbms="postgresql" splitStatements="true">
+            INSERT INTO booking
+            (room_id, person_id, person_identity_code, price, check_in_date, check_out_date, comments, late_check_out)
+            SELECT room.id, person.id, person.identity_code, 1000, '2022-12-31', '2023-01-01', 'got money to blow', TRUE
+            FROM room, person
+            WHERE room.id=1 AND person.identity_code='49601111234'
+            ;
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-43-Add-booking-table-to-database_4" author="Anti">
+        <sql dbms="postgresql" splitStatements="true">
+            INSERT INTO booking
+            (room_id, person_id, person_identity_code, price, check_in_date, check_out_date, comments, late_check_out)
+            SELECT room.id, person.id, person.identity_code, 300, '2022-12-26', '2023-12-27', 'could I get some flowers to room?', FALSE
+            FROM room, person
+            WHERE room.id=1 AND person.identity_code='38610211234'
+            ;
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-43-Add-booking-table-to-database_5" author="Anti">
+        <sql dbms="postgresql" splitStatements="true">
+            INSERT INTO booking
+            (room_id, person_id, person_identity_code, price, check_in_date, check_out_date, comments, late_check_out)
+            SELECT room.id, person.id, person.identity_code, 555, '2022-12-05', '2023-12-06', '', FALSE
+            FROM room, person
+            WHERE room.id=1 AND person.identity_code='37507312222'
+            ;
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="HOT-45-Add-employee-table-to-database_2" author="Robert-Valdmaa">
+        <sql dbms="postgresql" splitStatements="true">
+            INSERT INTO employee
+            (person_id, person_identity_code, employee_start_date, employee_role, employee_status)
+            SELECT person.id, person.identity_code, '2010-11-03', employee_role.id, employee_status.id
+            FROM person, employee_role, employee_status
+            WHERE person.identity_code='37507312222' AND employee_role.role_name='Housekeeping' AND employee_status.status_name='Working'
+            ;
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-45-Add-employee-table-to-database_3" author="Robert-Valdmaa">
+        <sql dbms="postgresql" splitStatements="true">
+            INSERT INTO employee
+            (person_id, person_identity_code, employee_start_date, employee_role, employee_status)
+            SELECT person.id, person.identity_code, '2015-06-04', employee_role.id, employee_status.id
+            FROM person, employee_role, employee_status
+            WHERE person.identity_code='38610211234' AND employee_role.role_name='Administrator' AND employee_status.status_name='Working'
+            ;
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-78-add-table-person_in_booking-and-test-data-2" author="Norman">
+        <sql dbms="postgresql">
+            INSERT INTO person_in_booking (booking_id, person_id , person_identity_code)
+            SELECT 1, person.id, person.identity_code FROM person WHERE person.identity_code='37507312222';
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-78-add-table-person_in_booking-and-test-data-3" author="Norman">
+        <sql dbms="postgresql">
+            INSERT INTO person_in_booking (booking_id, person_id , person_identity_code)
+            SELECT 1, person.id, person.identity_code FROM person WHERE person.identity_code='49601111234';
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-78-add-table-person_in_booking-and-test-data-4" author="Norman">
+        <sql dbms="postgresql">
+            INSERT INTO person_in_booking (booking_id, person_id , person_identity_code)
+            SELECT 1, person.id, person.identity_code FROM person WHERE person.identity_code='38610211234';
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-78-add-table-person_in_booking-and-test-data-5" author="Norman">
+        <sql dbms="postgresql">
+            INSERT INTO person_in_booking (booking_id, person_id , person_identity_code)
+            SELECT 2, person.id, person.identity_code FROM person WHERE person.identity_code='49601111234';
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-78-add-table-person_in_booking-and-test-data-6" author="Norman">
+        <sql dbms="postgresql">
+            INSERT INTO person_in_booking (booking_id, person_id , person_identity_code)
+            SELECT 3, person.id, person.identity_code FROM person WHERE person.identity_code='38610211234';
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-78-add-table-person_in_booking-and-test-data-7" author="Norman">
+        <sql dbms="postgresql">
+            INSERT INTO person_in_booking (booking_id, person_id , person_identity_code)
+            SELECT 4, person.id, person.identity_code FROM person WHERE person.identity_code='37507312222';
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="HOT-46-Add-hotel-service-order-to-database-2" author="Rivo">
+        <sql dbms="postgresql">
+            INSERT INTO hotel_service_order
+            (service_type, person_id, order_time, price, comments)
+            SELECT hotel_service.id, person.identity_code, '2022-12-26', 20, 'Parking'
+            FROM person, hotel_service
+            WHERE person.identity_code='49601111234' AND hotel_service.id='2'
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-46-Add-hotel-service-order-to-database-3" author="Rivo">
+        <sql dbms="postgresql">
+            INSERT INTO hotel_service_order
+            (service_type, person_id, order_time, price, comments)
+            SELECT hotel_service.id, person.identity_code, '2022-12-30', 30, 'Restaurant'
+            FROM person, hotel_service
+            WHERE person.identity_code='38610211234' AND hotel_service.id='8'
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="HOT-77-Add-table-person-in-service-order-to-database_2" author="Rivo">
+        <sql dbms="postgresql">
+            INSERT INTO person_in_service_order (service_id, person_id , person_identity_code)
+            SELECT 1, person.id, person.identity_code FROM person WHERE person.identity_code='49601111234';
+        </sql>
+    </changeSet>
+
+    <changeSet id="HOT-77-Add-table-person-in-service-order-to-database_3" author="Rivo">
+        <sql dbms="postgresql">
+            INSERT INTO person_in_service_order (service_id, person_id , person_identity_code)
+            SELECT 2, person.id, person.identity_code FROM person WHERE person.identity_code='38610211234';
+        </sql>
+    </changeSet>
+</databaseChangeLog>

@@ -5,16 +5,15 @@ import org.springframework.stereotype.Service;
 import tech.selmefy.hotel.controller.booking.dto.BookingDTO;
 import tech.selmefy.hotel.controller.room.dto.RoomAvailableHistoryDTO;
 import tech.selmefy.hotel.controller.room.dto.RoomDTO;
+import tech.selmefy.hotel.controller.room.dto.RoomResponseDTO;
 import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.mapper.RoomAvailableHistoryMapper;
 import tech.selmefy.hotel.mapper.RoomMapper;
-import tech.selmefy.hotel.repository.room.Room;
-import tech.selmefy.hotel.repository.room.RoomAvailableHistory;
-import tech.selmefy.hotel.repository.room.RoomAvailableHistoryRepository;
-import tech.selmefy.hotel.repository.room.RoomRepository;
+import tech.selmefy.hotel.repository.room.*;
 import tech.selmefy.hotel.service.booking.BookingService;
 import tech.selmefy.hotel.service.room.type.RoomType;
 
+import javax.persistence.TypedQuery;
 import java.time.LocalDate;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -32,15 +31,25 @@ public class RoomService {
     public final RoomRepository roomRepository;
     private BookingService bookingService;
     public final RoomAvailableHistoryRepository roomAvailableHistoryRepository;
+    public final RoomCriteriaRepository roomCriteriaRepository;
 
-    public List<RoomDTO> getAllRooms() {
-        List<Room> rooms = roomRepository.findAll();
-        List<RoomDTO> roomDTOList = new ArrayList<>();
-        for (Room room : rooms) {
-            RoomDTO roomDTO = RoomMapper.INSTANCE.toDTO(room);
-            roomDTOList.add(roomDTO);
+    public RoomResponseDTO getAllRoomsWithParams(int pageNumber, int pageSize, String orderBy, String orderType,
+                                                 Optional<String> filterBy, Optional<String> filterValue) {
+        TypedQuery<Room> roomSortedQuery = roomCriteriaRepository.roomSearchQuery(orderBy, orderType, filterBy, filterValue);
+
+        int roomLength;
+        if (filterBy.isEmpty() && filterValue.isEmpty()) {
+            roomLength = roomRepository.findAll().size();
+        } else {
+            roomLength = roomSortedQuery.getResultList().size();
         }
-        return roomDTOList;
+
+        roomSortedQuery.setFirstResult(pageNumber * pageSize);
+        roomSortedQuery.setMaxResults(pageSize);
+        List<Room> roomSortedList = roomSortedQuery.getResultList();
+        List<RoomDTO> roomDTOList = RoomMapper.INSTANCE.toDTOList(roomSortedList);
+
+        return new RoomResponseDTO(roomDTOList, roomLength);
     }
 
     public List<RoomDTO> getRoomsByType(String roomType) {
