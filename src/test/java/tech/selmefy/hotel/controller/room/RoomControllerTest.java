@@ -10,10 +10,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tech.selmefy.hotel.controller.room.dto.RoomDTO;
+import tech.selmefy.hotel.controller.room.dto.RoomResponseDTO;
 import tech.selmefy.hotel.service.room.RoomService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,15 +55,16 @@ class RoomControllerTest {
         roomDTOList.add(room2);
         roomDTOList.add(room3);
         roomDTOList.add(room4);
-        BDDMockito.given(roomService.getAllRooms()).willReturn(roomDTOList);
+        RoomResponseDTO roomResponseDTO = new RoomResponseDTO(roomDTOList, 4);
+        BDDMockito.given(roomService.getAllRoomsWithParams(0,10,"id", "ASC", Optional.empty(), Optional.empty())).willReturn((RoomResponseDTO) roomResponseDTO);
 
         // when
-        List<RoomDTO> result = roomController.getAllRooms();
+        RoomResponseDTO result = roomController.getAllRooms(0,10, "id", "ASC",Optional.empty(), Optional.empty());
 
         // then
-        assertEquals(roomDTOList.size(), result.size());
-        assertTrue(result.contains(room1));
-        assertTrue(result.contains(room2));
+        assertEquals(roomDTOList.size(), result.getTotalRoomsLength());
+        assertTrue(result.getRooms().contains(room1));
+        assertTrue(result.getRooms().contains(room2));
     }
 
     @Test
