@@ -14,10 +14,7 @@ import tech.selmefy.hotel.service.hotelservice.HotelServiceService;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import static org.junit.jupiter.api.Assertions.*;
-
-
 
 @ExtendWith(MockitoExtension.class)
 class HotelServiceControllerTest {
@@ -39,7 +36,6 @@ class HotelServiceControllerTest {
         hotelServiceDTOList.clear();
     }
 
-
     @Test
     void getAllHotelServices_returnsHotelServiceDTO_WhenRequested() {
 
@@ -49,7 +45,6 @@ class HotelServiceControllerTest {
         hotelServiceDTOList.add(service3);
         hotelServiceDTOList.add(service4);
         BDDMockito.given(hotelServiceService.getAllHotelServices()).willReturn(hotelServiceDTOList);
-
 
         // when
         List<HotelServiceDTO> result = hotelServiceController.getAllHotelServices();
