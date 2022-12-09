@@ -14,6 +14,8 @@ pipelines:
           runs-on:
             - self.hosted
             - linux
+          services:
+            - docker
           name: Build and Test
           script:
             - ./gradlew build
