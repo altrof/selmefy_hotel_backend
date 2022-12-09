@@ -1,6 +1,7 @@
 package tech.selmefy.hotel.service.user_account;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,7 +25,7 @@ class UserAccountServiceITest extends AbstractIntegrationTest {
     @Mock
     private UserAccountRepository userAccountRepository;
 
-    @Autowired
+    @InjectMocks
     private UserAccountService userAccountService;
 
     @WithMockUser(roles = "admin")
