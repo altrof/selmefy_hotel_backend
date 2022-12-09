@@ -9,6 +9,14 @@
 		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
 		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
 
-    <include file="db/changelog/db.changelog-master.xml"/>
-    <includeAll path="db/test-changelog/test-data"/>
+    <changeSet id="20221207-0140-HOT-147-insert-test-users-data" author="Aleksandr Trofimov">
+        <sql dbms="postgresql">
+            INSERT INTO person (id, identity_code, first_name, last_name, date_of_birth, time_of_registration, country, phone_number)
+            VALUES ('10000', '111111111', 'Selmefy', 'Test', '1986-10-21', CURRENT_TIMESTAMP, 'Estonia', '+3725555555');
+
+            INSERT INTO user_account (person_id, person_identity_code, email, account_user_name, password)
+            VALUES ('10000', '111111111', 'test@selmefy.tech', 'selmefytest', crypt('testpw', gen_salt('bf')));
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

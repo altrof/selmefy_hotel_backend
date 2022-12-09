@@ -1,5 +1,10 @@
 image: gradle:jdk17-alpine
 
+definitions:
+  services:
+    docker:
+      image: docker:dind
+
 pipelines:
   pull-requests:
     '**':
@@ -14,7 +19,6 @@ pipelines:
           name: Build and Test
           script:
             - ./gradlew build
-            - ./gradlew test
   branches:
     master:
       - step:
@@ -30,17 +34,6 @@ pipelines:
             - ./gradlew build
           artifacts:
             - build/libs/*-SNAPSHOT.jar
-      - step:
-          runs-on:
-            - self.hosted
-            - linux
-          services:
-            - docker
-          name: Test
-          caches:
-            - gradle
-          script:
-            - ./gradlew test
       - step:
           name: Push to Docker Hub
           runs-on:
@@ -79,17 +72,6 @@ pipelines:
             - ./gradlew build
           artifacts:
             - build/libs/*-SNAPSHOT.jar
-      - step:
-          runs-on:
-            - self.hosted
-            - linux
-          services:
-            - docker
-          name: Test
-          caches:
-            - gradle
-          script:
-            - ./gradlew test
       - step:
           name: Push to Docker Hub
           runs-on:
