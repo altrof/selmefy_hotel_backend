@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -211,9 +212,10 @@ class PersonServiceTest {
         assertTrue(actualResponse.contains(expectedResponse));
     }
 
+/*
     @Test
     void createNewPerson_returnId_WhenPersonSuccessfullyCreated() {
-        /*PersonDTO personDTO = PersonDTO.builder()
+        PersonDTO personDTO = PersonDTO.builder()
                 .identityCode("12345678")
                 .dateOfBirth (LocalDate.of(1996, 8, 17))
                 .firstName("Aleksandr")
@@ -233,11 +235,10 @@ class PersonServiceTest {
                 .phoneNumber("+37255555555")
                 .build();
 
-
         when(personMapper.toEntity(personDTO)).thenReturn(person);
         var actualResult = personService.createNewPerson(personDTO);
-        assertEquals(1L, actualResult);*/
-    }
+        assertEquals(1L, actualResult);
+    }*/
 
 
     @Test
@@ -270,7 +271,7 @@ class PersonServiceTest {
 
     @Test
     void getAllPeopleWithParams_returnsPeopleResponseDto_WhenRequested() {
-        /*Person person1 = new Person(1L,"1","john3","doe3","Estonia","555",LocalDate.of(2000, 10,5), new Timestamp(System.currentTimeMillis()));
+        Person person1 = new Person(1L,"1","john3","doe3","Estonia","555",LocalDate.of(2000, 10,5), new Timestamp(System.currentTimeMillis()));
         Person person2 = new Person(2L,"2","john2","doe2","Estonia","555",LocalDate.of(2000, 10,5), new Timestamp(System.currentTimeMillis()));
         Person person3 = new Person(3L,"3","john1","doe1","Estonia","555",LocalDate.of(2000, 10,5), new Timestamp(System.currentTimeMillis()));
 
@@ -281,8 +282,12 @@ class PersonServiceTest {
         personList.add(person2);
         personList.add(person3);
         //Optional.of("lastname")
-        given(personRepository.findAll()).willReturn(personList);
-        given(personCriteriaRepository.personSearchQuery("lastName","ASC", Optional.of("lastname"), Optional.<String>empty())).willReturn(typedQuery);
+        given(typedQuery.getResultList()).willReturn(personList);
+        //given(personRepository.findAll()).willReturn(personList);
+        given(personCriteriaRepository
+            .personSearchQuery("lastName","ASC", Optional.of("lastname"),
+            Optional.<String>empty()))
+            .willReturn(typedQuery);
         PeopleResponseDTO result = personService.getAllPeopleWithParams(0,10,"lastName","ASC",Optional.of("lastname"), Optional.<String>empty());
         System.out.println();
 
@@ -292,6 +297,37 @@ class PersonServiceTest {
 
         for (PersonDTO personDTO : result.getPeople()) {
             assertTrue(personIdList.contains(personDTO.getIdentityCode()));
-        }*/
+        }
     }
+
+    @Test
+    void getAllPeopleWithParams_returnsPeopleResponseDto_WhenRequested_WithoutFilter() {
+        Person person1 = new Person(1L,"1","john3","doe3","Estonia","555",LocalDate.of(2000, 10,5), new Timestamp(System.currentTimeMillis()));
+        Person person2 = new Person(2L,"2","john2","doe2","Estonia","555",LocalDate.of(2000, 10,5), new Timestamp(System.currentTimeMillis()));
+        Person person3 = new Person(3L,"3","john1","doe1","Estonia","555",LocalDate.of(2000, 10,5), new Timestamp(System.currentTimeMillis()));
+
+        //given
+        List<Person> personList = new ArrayList<>();
+        List<String> personIdList = Arrays.asList("1", "2", "3");
+        personList.add(person1);
+        personList.add(person2);
+        personList.add(person3);
+        given(typedQuery.getResultList()).willReturn(personList);
+        given(personRepository.findAll()).willReturn(personList);
+        given(personCriteriaRepository
+                .personSearchQuery("lastName","ASC", Optional.empty(),
+                        Optional.<String>empty()))
+                .willReturn(typedQuery);
+
+        PeopleResponseDTO result = personService.getAllPeopleWithParams(0,10,"lastName","ASC",Optional.empty(), Optional.empty());
+        System.out.println();
+
+        System.out.println(result.getPeople());
+        assertEquals(personList.size(), result.getTotalPeopleLength());
+
+        for (PersonDTO personDTO : result.getPeople()) {
+            assertTrue(personIdList.contains(personDTO.getIdentityCode()));
+        }
+    }
+
 }
