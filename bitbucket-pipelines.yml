@@ -9,20 +9,15 @@ pipelines:
           runs-on:
             - self.hosted
             - linux
-          services:
-            - docker
           name: Build and Test
           script:
             - ./gradlew build
-            - ./gradlew test
   branches:
     master:
       - step:
           runs-on:
             - self.hosted
             - linux
-          services:
-            - docker
           name: Build
           caches:
             - gradle
@@ -30,17 +25,6 @@ pipelines:
             - ./gradlew build
           artifacts:
             - build/libs/*-SNAPSHOT.jar
-      - step:
-          runs-on:
-            - self.hosted
-            - linux
-          services:
-            - docker
-          name: Test
-          caches:
-            - gradle
-          script:
-            - ./gradlew test
       - step:
           name: Push to Docker Hub
           runs-on:
@@ -70,8 +54,6 @@ pipelines:
           runs-on:
             - self.hosted
             - linux
-          services:
-            - docker
           name: Build
           caches:
             - gradle
@@ -79,17 +61,6 @@ pipelines:
             - ./gradlew build
           artifacts:
             - build/libs/*-SNAPSHOT.jar
-      - step:
-          runs-on:
-            - self.hosted
-            - linux
-          services:
-            - docker
-          name: Test
-          caches:
-            - gradle
-          script:
-            - ./gradlew test
       - step:
           name: Push to Docker Hub
           runs-on:
