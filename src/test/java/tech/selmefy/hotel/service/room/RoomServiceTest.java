@@ -10,12 +10,16 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tech.selmefy.hotel.controller.booking.dto.BookingDTO;
+import tech.selmefy.hotel.controller.room.dto.RoomAvailableHistoryDTO;
 import tech.selmefy.hotel.controller.room.dto.RoomDTO;
 import tech.selmefy.hotel.controller.room.dto.RoomResponseDTO;
+import tech.selmefy.hotel.exception.ApiRequestException;
 import tech.selmefy.hotel.mapper.BookingMapper;
 import tech.selmefy.hotel.mapper.RoomMapper;
 import tech.selmefy.hotel.repository.booking.Booking;
 import tech.selmefy.hotel.repository.room.Room;
+import tech.selmefy.hotel.repository.room.RoomAvailableHistory;
+import tech.selmefy.hotel.repository.room.RoomAvailableHistoryRepository;
 import tech.selmefy.hotel.repository.room.RoomCriteriaRepository;
 import tech.selmefy.hotel.repository.room.RoomRepository;
 import tech.selmefy.hotel.service.booking.BookingService;
@@ -40,12 +44,17 @@ class RoomServiceTest {
     private Room room3 = new Room(3L, 10F, 1, 2, 2, RoomType.ECONOMY, false);
     private Room room4 = new Room(4L, 10F, 1, 2, 2, RoomType.REGULAR, true);
 
+    private RoomAvailableHistory roomAvailableHistory = new RoomAvailableHistory();
+
     private List<Long> roomIdList = Arrays.asList(new Long[]{1L, 2L, 3L, 4L});
     @Mock
     private RoomRepository roomRepository;
 
     @Mock
     private RoomCriteriaRepository roomCriteriaRepository;
+
+    @Mock
+    RoomAvailableHistoryRepository roomAvailableHistoryRepository;
 
     @Mock
     private BookingService bookingService;
@@ -72,7 +81,7 @@ class RoomServiceTest {
     }
 
     @Test
-    void getAllRoomsWithParamsNoFilterValue() {
+    void getAllRoomsWithParams_NoFilterValue() {
 
         // given
         roomList.add(room1);
@@ -101,7 +110,7 @@ class RoomServiceTest {
 
 
     @Test
-    void getAllRoomsWithParamsFilterValueSet() {
+    void getAllRoomsWithParams_FilterValueSet() {
 
         // given
         roomList.add(room2);
@@ -128,7 +137,7 @@ class RoomServiceTest {
 
 
     @Test
-    void getRoomsByTypeRegular() {
+    void getRoomsByType_Regular() {
 
         // given
         roomList.add(room1);
@@ -148,7 +157,7 @@ class RoomServiceTest {
     }
 
     @Test
-    void getAvailableRoomsNoRoomTypeNoBookings() {
+    void getAvailableRooms_NoRoomTypeNoBookings() {
 
         // All rooms are available except for where getRoomAvailableForBooking is set false.
         int numberOfAvailableRooms = 3;
@@ -176,7 +185,7 @@ class RoomServiceTest {
     }
 
     @Test
-    void getAvailableRoomsRegularNoBookings() {
+    void getAvailableRooms_RegularNoBookings() {
 
         // All Regular rooms are available except for where getRoomAvailableForBooking is set false.
         int numberOfRegularRooms = 2;
@@ -204,7 +213,7 @@ class RoomServiceTest {
     }
 
     @Test
-    void getAvailableRoomsNoRoomTypeBookedExactDates() {
+    void getAvailableRooms_NoRoomTypeBookedExactDates() {
 
         // All rooms are available except for where getRoomAvailableForBooking is set false
         // and overlapping booking exists.
@@ -259,7 +268,7 @@ class RoomServiceTest {
     }
 
     @Test
-    void getAvailableRoomsNoRoomTypeBookedPartialDates() {
+    void getAvailableRooms_NoRoomTypeBookedPartialDates() {
 
         // All rooms are available except for where getRoomAvailableForBooking is set false
         // and overlapping booking exists.
@@ -310,5 +319,83 @@ class RoomServiceTest {
         for (RoomDTO roomDTO : result) {
             assertTrue(roomIdList.contains(roomDTO.getId()));
         }
+    }
+
+    @Test
+    void getAvailableRooms_throwsIllegalArgumentException_WhenStartDateAfterEndDate() {
+        int numberOfFreeRooms = 1;
+        roomList.add(room1);
+        roomList.add(room2);
+        roomList.add(room3);
+        roomList.add(room4);
+
+        // given
+        // then
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            roomService.getAvailableRooms(
+                    LocalDate.of(2024, 10, 21),
+                    LocalDate.of(2024, 10, 20),
+                    (short) 1, (short) 0, Optional.empty());
+        });
+
+        assertEquals("Start date must be earlier than end date", exception.getMessage());
+    }
+
+    @Test
+    void getAvailableRooms_throwsIllegalArgumentException_NoAdult() {
+        int numberOfFreeRooms = 1;
+        roomList.add(room1);
+        roomList.add(room2);
+        roomList.add(room3);
+        roomList.add(room4);
+
+        // given
+        // then
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            roomService.getAvailableRooms(
+                    LocalDate.of(2024, 10, 20),
+                    LocalDate.of(2024, 10, 21),
+                    (short) 0, (short) 0, Optional.empty());
+        });
+
+        assertEquals("At least one adult needs to be present", exception.getMessage());
+    }
+
+    @Test
+    void updateRoomAvailableForBooking() {
+
+        // given
+        roomList.add(room1);
+
+        BDDMockito.given(roomRepository.findById(1L)).willReturn(Optional.of(room1));
+
+        // when
+        roomService.updateRoomAvailableForBooking(1L, false);
+
+        // then
+        assertFalse(room1.getRoomAvailableForBooking());
+
+        // when
+        roomService.updateRoomAvailableForBooking(1L, true);
+
+        // then
+        assertTrue(room1.getRoomAvailableForBooking());
+    }
+
+    @Test
+    void getRoomAvailableHistoryByRoomId() {
+
+        // given
+        roomList.add(room1);
+        List<RoomAvailableHistory> roomAvailableHistory = new ArrayList<>();
+        BDDMockito.given(roomAvailableHistoryRepository
+        .findRoomAvailableHistoriesByRoomId(1L))
+        .willReturn(roomAvailableHistory);
+        
+        // when
+        List<RoomAvailableHistoryDTO> result = roomService.getRoomAvailableHistoryByRoomId(1L);
+
+        // then
+        assertEquals(roomAvailableHistory.size(), result.size());
     }
 }
