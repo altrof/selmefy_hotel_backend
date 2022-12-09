@@ -1,11 +1,18 @@
 image: gradle:jdk17-alpine
 
+definitions:
+  services:
+    docker:
+      image: docker:dind
+
 pipelines:
   pull-requests:
     '**':
       - step:
           caches:
             - gradle
+          services:
+            - docker
           runs-on:
             - self.hosted
             - linux
