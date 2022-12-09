@@ -11,8 +11,6 @@ pipelines:
       - step:
           caches:
             - gradle
-          services:
-            - docker
           runs-on:
             - self.hosted
             - linux
@@ -25,6 +23,8 @@ pipelines:
           runs-on:
             - self.hosted
             - linux
+          services:
+            - docker
           name: Build
           caches:
             - gradle
@@ -61,6 +61,8 @@ pipelines:
           runs-on:
             - self.hosted
             - linux
+          services:
+            - docker
           name: Build
           caches:
             - gradle

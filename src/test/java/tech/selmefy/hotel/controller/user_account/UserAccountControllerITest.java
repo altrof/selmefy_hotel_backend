@@ -27,24 +27,13 @@ class UserAccountControllerITest extends AbstractIntegrationTest {
     void getAllUsers_returnAllExistUsers() throws Exception {
 
         mvc.perform(get("/users"))
-            .andExpect(jsonPath("$[0].personId", is(2)))
-            .andExpect(jsonPath("$[0].username", is("marimaja")))
+            .andExpect(jsonPath("$[0].personId", is(10000)))
+            .andExpect(jsonPath("$[0].username", is("selmefytest")))
             .andExpect(jsonPath("$[0].password", containsString("$2a$06$")))
-            .andExpect(jsonPath("$[0].email", is("test1@email.com")))
-            .andExpect(jsonPath("$[0].identityCode", is("49601111234")))
-            .andExpect(jsonPath("$[0].roles.[0].id", is(1)))
-            .andExpect(jsonPath("$[0].roles.[0].roleType", is("ROLE_DEFAULT_USER")))
+            .andExpect(jsonPath("$[0].email", is("test@selmefy.tech")))
+            .andExpect(jsonPath("$[0].identityCode", is("111111111")))
             .andExpect(jsonPath("$[0].enabled", is(false)))
-            .andExpect(jsonPath("$[0].locked", is(false)))
-            .andExpect(jsonPath("$[1].personId", is(3)))
-            .andExpect(jsonPath("$[1].username", is("sibul")))
-            .andExpect(jsonPath("$[1].password", containsString("$2a$06$")))
-            .andExpect(jsonPath("$[1].email", is("test2@email.com")))
-            .andExpect(jsonPath("$[1].identityCode", is("37507312222")))
-            .andExpect(jsonPath("$[1].roles.[0].id", is(1)))
-            .andExpect(jsonPath("$[1].roles.[0].roleType", is("ROLE_DEFAULT_USER")))
-            .andExpect(jsonPath("$[1].enabled", is(false)))
-            .andExpect(jsonPath("$[1].locked", is(false)));
+            .andExpect(jsonPath("$[0].locked", is(false)));
 
     }
 }
