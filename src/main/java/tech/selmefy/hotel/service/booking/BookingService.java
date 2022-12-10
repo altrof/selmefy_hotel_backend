@@ -28,6 +28,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class BookingService {
         private static final Logger logger = LoggerFactory.getLogger(BookingService.class);
+
         public final BookingRepository bookingRepository;
         public final PersonRepository personRepository;
         public final RoomRepository roomRepository;
@@ -88,15 +89,18 @@ public class BookingService {
         Booking booking = BookingMapper.INSTANCE.toEntity(bookingDTO);
         booking.setRoom(room);
         booking.setPerson(bookingOwner);
-        bookingRepository.save(booking);
-        addPersonInBooking(booking, bookingOwner);
+
+        // Initializing the result of .save() method as a new variable
+        // will make it possible to test certain logic in unit tests.
+        Booking savedBooking = bookingRepository.save(booking);
+        addPersonInBooking(savedBooking, bookingOwner);
 
         if (otherGuestsIdentityCodes.isPresent()) {
             List<Person> otherPeople = otherGuestsIdentityCodes.get().stream()
                     .map(idCode -> personRepository.findPersonByIdentityCode(idCode).orElseThrow(
                             () -> new ApiRequestException("Additional guest is not in the database: " + idCode))).toList();
             for (Person person : otherPeople) {
-                addPersonInBooking(booking, person);
+                addPersonInBooking(savedBooking, person);
             }
         }
     }
