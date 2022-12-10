@@ -469,7 +469,51 @@ class BookingServiceTest {
     }
 
     @Test
-    void updateBooking() {
-    
+    void updateBooking_success() {
+
+        Booking originalBooking = Booking.builder()
+                .id(1L)
+                .roomId(1L)
+                .room(room1)
+                .price(50)
+                .checkInDate(LocalDate.of(2024, 10, 20))
+                .checkOutDate(LocalDate.of(2024, 10, 25))
+                .comments("Something something")
+                .lateCheckOut(true)
+                .personId(1L)
+                .personIdentityCode("1234")
+                .build();
+
+        bookingList.add(originalBooking);
+
+        Booking changedBooking = Booking.builder()
+                .id(1L)
+                .roomId(1L)
+                .room(room1)
+                .price(35)
+                .checkInDate(LocalDate.of(2024, 10, 22))
+                .checkOutDate(LocalDate.of(2024, 10, 26))
+                .comments("New booking")
+                .lateCheckOut(false)
+                .personId(1L)
+                .personIdentityCode("1234")
+                .build();
+
+        BookingDTO changedBookingDTO = BookingMapper.INSTANCE.toDTO(changedBooking);
+
+        // given
+        BDDMockito.given(bookingRepository.findAll()).willReturn(bookingList);
+        BDDMockito.given(bookingRepository.findById(1L)).willReturn(Optional.of(originalBooking));
+        BDDMockito.given(roomRepository.findById(1L)).willReturn(Optional.of(room1));
+        BDDMockito.given(personRepository.findPersonByIdentityCode("1234")).willReturn(Optional.of(person));
+
+        // when
+        BookingDTO result = bookingService.updateBooking(1L, changedBookingDTO);
+
+        assertEquals(changedBookingDTO.getPrice(), result.getPrice());
+        assertEquals(changedBookingDTO.getCheckInDate(), result.getCheckInDate());
+        assertEquals(changedBookingDTO.getCheckOutDate(), result.getCheckOutDate());
+        assertEquals(changedBookingDTO.getComments(), result.getComments());
+        assertEquals(changedBookingDTO.isLateCheckOut(), result.isLateCheckOut());
     }
 }
