@@ -47,7 +47,7 @@ public class BookingController {
             try {
                 BookingDTO.class.getDeclaredField(filterBy.get());
             } catch (NoSuchFieldException e) {
-                throw new ApiRequestException("Cannot filter by " + filterBy);
+                throw new ApiRequestException("Cannot filter by " + filterBy.get());
             }
         }
 
