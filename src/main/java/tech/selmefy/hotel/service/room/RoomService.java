@@ -1,8 +1,10 @@
 package tech.selmefy.hotel.service.room;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import tech.selmefy.hotel.controller.booking.dto.BookingDTO;
+import tech.selmefy.hotel.controller.room.dto.AddNewRoomDTO;
 import tech.selmefy.hotel.controller.room.dto.RoomAvailableHistoryDTO;
 import tech.selmefy.hotel.controller.room.dto.RoomDTO;
 import tech.selmefy.hotel.controller.room.dto.RoomResponseDTO;
@@ -138,5 +140,46 @@ public class RoomService {
         roomAvailableHistory.setRoomAvailableForBooking(isBookingAvailable);
         roomAvailableHistory.setCreatedDtime(Timestamp.valueOf(LocalDateTime.now()));
         roomAvailableHistoryRepository.save(roomAvailableHistory);
+    }
+
+    public ResponseEntity<Object> updateRoomInfo(RoomDTO roomDTO) {
+        Room room = RoomMapper.INSTANCE.toEntity(roomDTO);
+
+        try {
+            Room roomToUpdate = roomRepository.getReferenceById(room.getId());
+            roomToUpdate.setRoomType(room.getRoomType());
+            roomToUpdate.setRoomAvailableForBooking(room.getRoomAvailableForBooking());
+            roomToUpdate.setSize(room.getSize());
+            roomToUpdate.setNumberOfBeds(room.getNumberOfBeds());
+            roomRepository.save(roomToUpdate);
+        } catch (Exception e) {
+            throw new ApiRequestException(e.getMessage());
+        }
+
+        return ResponseEntity.ok("Room with id " + roomDTO.getId() + " is updated!");
+    }
+
+    public ResponseEntity<Object> deleteRoom(Long roomId) {
+        try {
+            roomRepository.deleteById(roomId);
+        } catch (Exception e) {
+            throw new ApiRequestException(e.getMessage());
+        }
+
+        return ResponseEntity.ok("Room with id " + roomId + " is successfully removed!");
+    }
+
+    public ResponseEntity<Object> addNewRoom(AddNewRoomDTO roomDTO) {
+        Room room = RoomMapper.INSTANCE.addNewRoomToEntity(roomDTO);
+        int roomsLength = roomRepository.findAll().size();
+        room.setId(roomsLength + 1L);
+
+        try {
+            roomRepository.save(room);
+        } catch (Exception e) {
+            throw new ApiRequestException(e.getMessage());
+        }
+
+        return ResponseEntity.ok("New room is successfully created!");
     }
 }

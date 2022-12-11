@@ -3,14 +3,18 @@ package tech.selmefy.hotel.controller.room;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import tech.selmefy.hotel.controller.room.dto.AddNewRoomDTO;
 import tech.selmefy.hotel.controller.room.dto.RoomAvailableHistoryDTO;
 import tech.selmefy.hotel.controller.room.dto.RoomDTO;
 import tech.selmefy.hotel.controller.room.dto.RoomResponseDTO;
@@ -89,5 +93,20 @@ public class RoomController {
     @GetMapping("/available/history/{roomId}")
     public List<RoomAvailableHistoryDTO> getRoomAvailableHistoryByRoomId(@PathVariable Long roomId) {
         return roomService.getRoomAvailableHistoryByRoomId(roomId);
+    }
+
+    @PutMapping
+    public ResponseEntity<Object> updateRoomInfo(@RequestBody RoomDTO roomDTO) {
+        return roomService.updateRoomInfo(roomDTO);
+    }
+
+    @DeleteMapping("/{roomId}")
+    public ResponseEntity<Object> deleteRoom(@PathVariable Long roomId) {
+        return roomService.deleteRoom(roomId);
+    }
+
+    @PostMapping
+    public ResponseEntity<Object> addNewRoom(@RequestBody AddNewRoomDTO roomDTO) {
+        return roomService.addNewRoom(roomDTO);
     }
 }
