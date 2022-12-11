@@ -7,9 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 import tech.selmefy.hotel.controller.booking.dto.BookingDTO;
+import tech.selmefy.hotel.controller.room.dto.AddNewRoomDTO;
 import tech.selmefy.hotel.controller.room.dto.RoomAvailableHistoryDTO;
 import tech.selmefy.hotel.controller.room.dto.RoomDTO;
 import tech.selmefy.hotel.controller.room.dto.RoomResponseDTO;
@@ -395,5 +396,85 @@ class RoomServiceTest {
 
         // then
         assertEquals(roomAvailableHistory.size(), result.size());
+    }
+
+    @Test
+    void updateRoomInfo_returnsResponseEntityOk_WhenProvidedDataIsCorrect() {
+        // given
+        roomList.add(room1);
+        RoomDTO roomDTO = new RoomDTO();
+        roomDTO.setId(1L);
+        roomDTO.setRoomType(RoomType.KING_SIZE.getRoomTypeText());
+        roomDTO.setSize(10F);
+        roomDTO.setRoomAvailableForBooking(false);
+        roomDTO.setRoomNumber(1);
+        roomDTO.setNumberOfBeds(5);
+        roomDTO.setFloorId(1);
+
+        BDDMockito.given(roomRepository.getReferenceById(room1.getId())).willReturn(room1);
+
+        // when
+        var actualResult = roomService.updateRoomInfo(roomDTO);
+        ResponseEntity<Object> expectResult = ResponseEntity.ok("Room with id " + roomDTO.getId() + " is updated!");
+
+        // then
+        assertEquals(expectResult, actualResult);
+    }
+
+    @Test
+    void updateRoomInfo_throwsApiRequestException_WhenProvidedDataIsIncorrect() {
+        // given
+        RoomDTO roomDTO = new RoomDTO();
+        roomDTO.setId(1L);
+        roomDTO.setRoomType(RoomType.KING_SIZE.getRoomTypeText());
+        roomDTO.setSize(10F);
+        roomDTO.setRoomAvailableForBooking(false);
+        roomDTO.setRoomNumber(1);
+        roomDTO.setNumberOfBeds(5);
+        roomDTO.setFloorId(1);
+
+        BDDMockito.given(roomRepository.getReferenceById(roomDTO.getId())).willReturn(null);
+
+        assertThrows(ApiRequestException.class, () -> {
+            roomService.updateRoomInfo(roomDTO);
+        });
+    }
+
+    @Test
+    void deleteRoom_returnsResponseEntityOk_WhenProvidedRoomExist () {
+        RoomDTO roomDTO = new RoomDTO();
+        roomDTO.setId(1L);
+        roomDTO.setRoomType(RoomType.KING_SIZE.getRoomTypeText());
+        roomDTO.setSize(10F);
+        roomDTO.setRoomAvailableForBooking(false);
+        roomDTO.setRoomNumber(1);
+        roomDTO.setNumberOfBeds(5);
+        roomDTO.setFloorId(1);
+
+        Room room = RoomMapper.INSTANCE.toEntity(roomDTO);
+
+        var actualResult = roomService.deleteRoom(room.getId());
+
+        ResponseEntity<Object> expectedResult = ResponseEntity.ok("Room with id " + room.getId() + " is successfully removed!");
+
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    void addNewRoom_returnsResponseEntityOk_WhenProvidedDataIsCorrect() {
+        AddNewRoomDTO roomDTO = new AddNewRoomDTO();
+        roomDTO.setRoomType(RoomType.KING_SIZE.getRoomTypeText());
+        roomDTO.setSize(10F);
+        roomDTO.setRoomAvailableForBooking(false);
+        roomDTO.setRoomNumber(1);
+        roomDTO.setNumberOfBeds(5);
+        roomDTO.setFloorId(1);
+
+
+        var actualResult = roomService.addNewRoom(roomDTO);
+
+        ResponseEntity<Object> expectedResult = ResponseEntity.ok("New room is successfully created!");
+
+        assertEquals(expectedResult, actualResult);
     }
 }

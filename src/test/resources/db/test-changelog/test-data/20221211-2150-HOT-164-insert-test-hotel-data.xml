@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet id="20221211-2150-HOT-164-insert-test-hotel-data" author="Aleksandr Trofimov">
+        <sql dbms="postgresql">
+            INSERT INTO hotel (hotel_name) VALUES ('Selmefy First Floor');
+            INSERT INTO hotel (hotel_name) VALUES ('Selmefy Second Floor');
+
+            INSERT INTO hotel_floor (hotel_id)
+            SELECT id FROM hotel WHERE hotel_name='Selmefy First Floor';
+
+            INSERT INTO hotel_floor (hotel_id)
+            SELECT id FROM hotel WHERE hotel_name='Selmefy Second Floor';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
