@@ -62,9 +62,6 @@ class RoomServiceTest {
     @Mock
     private TypedQuery<Room> typedQuery;
 
-    @Spy
-    private RoomMapper roomMapper;
-
     @InjectMocks
     private RoomService roomService;
 
@@ -197,7 +194,8 @@ class RoomServiceTest {
         BDDMockito.given(roomRepository.findAll()).willReturn(roomList);
 
         BDDMockito.given(bookingService.getAllBookings()).willReturn(new ArrayList<>());
-        // then
+
+        // when
         List<RoomDTO> result = roomService.getAvailableRooms(
                 LocalDate.of(2024, 10, 20),
                 LocalDate.of(2024, 10, 25),
