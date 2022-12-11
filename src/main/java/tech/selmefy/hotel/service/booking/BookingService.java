@@ -21,6 +21,7 @@ import tech.selmefy.hotel.repository.room.RoomRepository;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class BookingService {
         private static final Logger logger = LoggerFactory.getLogger(BookingService.class);
+
         public final BookingRepository bookingRepository;
         public final PersonRepository personRepository;
         public final RoomRepository roomRepository;
@@ -89,15 +91,18 @@ public class BookingService {
         Booking booking = BookingMapper.INSTANCE.toEntity(bookingDTO);
         booking.setRoom(room);
         booking.setPerson(bookingOwner);
-        bookingRepository.save(booking);
-        addPersonInBooking(booking, bookingOwner);
+
+        // Initializing the result of .save() method as a new variable
+        // will make it possible to test certain logic in unit tests.
+        Booking savedBooking = bookingRepository.save(booking);
+        addPersonInBooking(savedBooking, bookingOwner);
 
         if (otherGuestsIdentityCodes.isPresent()) {
             List<Person> otherPeople = otherGuestsIdentityCodes.get().stream()
                     .map(idCode -> personRepository.findPersonByIdentityCode(idCode).orElseThrow(
                             () -> new ApiRequestException("Additional guest is not in the database: " + idCode))).toList();
             for (Person person : otherPeople) {
-                addPersonInBooking(booking, person);
+                addPersonInBooking(savedBooking, person);
             }
         }
     }
@@ -147,8 +152,11 @@ public class BookingService {
             return false;
         } else {
             List<Booking> bookings = bookingRepository.findAll().stream()
-                .filter(booking -> booking.getRoomId().equals(room.getId())).toList();
-            bookingUpdate.ifPresent(bookings::remove);
+                .filter(booking -> booking.getRoomId().equals(room.getId()))
+                .collect(Collectors.toCollection(ArrayList::new));
+            if (bookingUpdate.isPresent()) {
+                bookings.remove(bookingUpdate.get());
+            }
             for (Booking booking : bookings) {
                 logger.info("Requested room id: {}, booking room id: {}", room.getId(), booking.getRoomId());
                 logger.info("Comparing existing bookings to requested dates");
@@ -175,28 +183,29 @@ public class BookingService {
         return bookingRepository.findById(id).map(BookingMapper.INSTANCE::toDTO).orElseThrow();
     }
 
-    public BookingDTO updateBooking(Long id, @NonNull BookingDTO bookingDTO) {
+    public BookingDTO updateBooking(Long id, @NonNull BookingDTO updatedBookingDTO) {
         Booking booking = bookingRepository.findById(id).orElseThrow(
                 () -> new ApiRequestException("Booking does not exist with id: " + id));
 
-        Room room = roomRepository.findById(bookingDTO.getRoomId())
+        Room room = roomRepository.findById(updatedBookingDTO.getRoomId())
             .orElseThrow(() -> new ApiRequestException("No such room!"));
 
-        validateBookingRequest(bookingDTO, room, Optional.of(booking));
+        validateBookingRequest(updatedBookingDTO, room, Optional.of(booking));
 
-        Person person = personRepository.findPersonByIdentityCode(bookingDTO.getPersonIdentityCode())
+        Person person = personRepository.findPersonByIdentityCode(updatedBookingDTO.getPersonIdentityCode())
             .orElseThrow(() -> new ApiRequestException("No such person!"));
 
-        booking.setCheckInDate(bookingDTO.getCheckInDate());
-        booking.setCheckOutDate(bookingDTO.getCheckOutDate());
-        booking.setPrice(bookingDTO.getPrice());
-        booking.setComments(bookingDTO.getComments());
+        booking.setCheckInDate(updatedBookingDTO.getCheckInDate());
+        booking.setCheckOutDate(updatedBookingDTO.getCheckOutDate());
+        booking.setPrice(updatedBookingDTO.getPrice());
+        booking.setComments(updatedBookingDTO.getComments());
 
         booking.setPerson(person);
-        booking.setPersonIdentityCode(bookingDTO.getPersonIdentityCode());
+        booking.setPersonIdentityCode(updatedBookingDTO.getPersonIdentityCode());
 
-        booking.setRoomId(bookingDTO.getRoomId());
+        booking.setRoomId(updatedBookingDTO.getRoomId());
         booking.setRoom(room);
+        booking.setLateCheckOut(updatedBookingDTO.isLateCheckOut());
 
         bookingRepository.save(booking);
         return BookingMapper.INSTANCE.toDTO(booking);
