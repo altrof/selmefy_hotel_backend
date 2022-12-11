@@ -123,7 +123,7 @@ class BookingServiceTest {
     }
 
     @Test
-    void getAllBookings() {
+    void getAllBookings_returnsCorrectListOfBookings() {
 
         int numberOfBookings = 2;
 
@@ -139,7 +139,7 @@ class BookingServiceTest {
     }
 
     @Test
-    void getAllBookingsWithParams_NoFiltering() {
+    void getAllBookingsWithParams_noFiltering() {
         int numberOfBookings = 2;
 
         bookingList.add(booking1);
@@ -162,7 +162,7 @@ class BookingServiceTest {
     }
 
     @Test
-    void getAllBookingsWithParams_Filtering() {
+    void getAllBookingsWithParams_returnsFilteredList_whenProvidedParamsAreExist() {
         int numberOfBookings = 2;
 
         bookingList.add(booking1);
@@ -184,7 +184,7 @@ class BookingServiceTest {
     }
 
     @Test
-    void createNewBooking_throwsAPIRequestException_WhenNoRoomWithId() {
+    void createNewBooking_throwsAPIRequestException_whenNoRoomWithId() {
 
         BookingDTO bookingDTO1 = BookingMapper.INSTANCE.toDTO(booking1);
 
@@ -200,7 +200,7 @@ class BookingServiceTest {
     }
 
     @Test
-    void createNewBooking_throwsAPIRequestException_WhenCheckOutAfterCheckIn() {
+    void createNewBooking_throwsAPIRequestException_whenCheckOutAfterCheckIn() {
 
         Booking invalidBooking = Booking.builder()
                 .id(1L)
@@ -227,7 +227,7 @@ class BookingServiceTest {
     }
 
     @Test
-    void createNewBooking_throwsAPIRequestException_WhenCheckInPast() {
+    void createNewBooking_throwsAPIRequestException_whenCheckInPast() {
 
         Booking invalidBooking = Booking.builder()
                 .id(1L)
